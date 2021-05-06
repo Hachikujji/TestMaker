@@ -8,4 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Prism.Unity" Version="8.0.0.1909" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TestMaker.Authorization\TestMaker.Authorization.csproj" />
+  </ItemGroup>
 </Project>

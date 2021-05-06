@@ -2,20 +2,29 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using TestMaker.Database.Entities;
 using TestMaker.Database.Models;
 
 namespace TestMaker.Database.Services
 {
     public interface IDatabaseService
     {
-        public void AddUser(string username, string password);
+        public Task AddUserAsync(string username, string password);
 
-        public void AddUser(Users user);
+        public Task AddUserAsync(User user);
 
-        public Task<List<Users>> GetUsers();
+        public Task<List<User>> GetUsersAsync();
 
-        public Task<Users> GetUser(int id);
+        public Task<User> GetUserAsync(int id);
 
-        public Task<Users> GetUser(string username, string password);
+        public Task<User> GetUserAsync(string username, string password);
+
+        public Task<bool> IsUserExistsAsync(string username);
+
+        public Task UpdateUserAsync(User user);
+
+        public string CreateJwtToken(User user);
+
+        public RefreshToken CreateRefreshToken();
     }
 }

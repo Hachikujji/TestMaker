@@ -14,9 +14,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TestMaker.Database;
 using TestMaker.Database.Models;
 using TestMaker.Database.Services;
-using TestMakerApi.Properties;
 
 namespace TestMakerApi
 {

@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TestMaker.Database.Entities;
 
 namespace TestMaker.Database.Models
 {
     public class DatabaseContext : DbContext
     {
-        public DbSet<Users> Users { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public DatabaseContext()
         {
@@ -16,14 +18,7 @@ namespace TestMaker.Database.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Users>(entity => { entity.Property(e => e.Username).IsRequired(); });
-            modelBuilder.Entity<Users>(entity => { entity.Property(e => e.Password).IsRequired(); });
-
-            #region Seed
-
-            modelBuilder.Entity<Users>().HasData(new Users { Id = 1, Username = "testu", Password = "testp" });
-
-            #endregion Seed
+            modelBuilder.Entity<User>().HasData(new User { Id = 1, Username = "testUsername", Password = "testPassword" });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

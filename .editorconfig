@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# RCS1181: Convert comment to documentation comment.
+dotnet_diagnostic.RCS1181.severity = none

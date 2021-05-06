@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 
-namespace TestMakerApi.Properties
+namespace TestMaker.Database
 {
     public static class AuthOptions
     {
         public const string ISSUER = "TestMakerServer"; // издатель токена
         public const string AUDIENCE = "TestMakerClient"; // потребитель токена
-        private const string KEY = "mysupersecret_secretkey!123";   // ключ для шифрации
-        public const int LIFETIME = 5; // время жизни токена - 1 минута
+        private const string KEY = "randomKey123randomKey321";   // ключ для шифрации
+        public const int LIFETIME = 5; // время жизни токена
 
         public static SymmetricSecurityKey GetSymmetricSecurityKey()
         {

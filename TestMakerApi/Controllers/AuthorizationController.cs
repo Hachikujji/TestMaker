@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.RenderTree;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.RenderTree;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -6,9 +8,9 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using TestMaker.Database.Entities;
 using TestMaker.Database.Models;
 using TestMaker.Database.Services;
-using TestMakerApi.Properties;
 
 namespace TestMakerApi.Controllers
 {
@@ -23,53 +25,54 @@ namespace TestMakerApi.Controllers
             _databaseService = databaseService;
         }
 
-        [HttpGet("/getUsers")]
-        public IEnumerable<UsersDTO> GetUsers()
-        {
-            var mapper = new AutoMapper.MapperConfiguration(cfg => cfg.CreateMap<Users, UsersDTO>()).CreateMapper();
+        //[HttpGet("/user/getUsers")]
+        //public IEnumerable<UsersDTO> GetUsers()
+        //{
+        //    var mapper = new AutoMapper.MapperConfiguration(cfg => cfg.CreateMap<User, UsersDTO>()).CreateMapper();
 
-            var l = _databaseService.GetUsers().Result;
-            return mapper.Map<IEnumerable<Users>, List<UsersDTO>>(l);
-        }
+        //    var l = _databaseService.GetUsersAsync().Result;
+        //    return mapper.Map<IEnumerable<User>, List<UsersDTO>>(l);
+        //}
 
-        [HttpPost("/addUser")]
-        public ActionResult<Users> AddUsers(Users user)
+        [HttpPost("/user/addUser")]
+        public ActionResult<UserAuthorizationRequest> AddUsers(UserAuthorizationRequest userInfo)
         {
-            _databaseService.AddUser(user);
+            var user = new User(userInfo.Username,userInfo.Password);
+            _databaseService.AddUserAsync(user);
 
             //return CreatedAtAction("GetTodoItem", new { id = todoItem.Id }, todoItem);
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
-        [HttpPost("/token")]
-        public IActionResult Token(string username, string password)
+        [AllowAnonymous]
+        [HttpPost("/user/authorization")]
+        public ActionResult<UserAuthorizationRequest> Authorization(UserAuthorizationRequest model)
         {
-            var user = _databaseService.GetUser(username, password).Result;
+            var user = _databaseService.GetUserAsync(model.Username, model.Password).Result;
             if (user == null)
                 return BadRequest(new { errorText = "Invalid username or password." });
 
-            var now = DateTime.UtcNow;
-            var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: now,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+            var jwtToken = _databaseService.CreateJwtToken(user);
+            var refreshToken = _databaseService.CreateRefreshToken();
 
-            var response = new
+            user.RefreshToken = refreshToken;
+            _databaseService.UpdateUserAsync(user);
+
+            // cookies
+            var cookieOptions = new CookieOptions
             {
-                access_token = encodedJwt,
-                username = user.Username
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7)
             };
+            Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
 
-            return Json(response);
+            return Ok(new UserAuthorizationResponse(user, jwtToken, refreshToken.Token));
         }
 
-        [HttpGet("/getUser/{id}")]
-        public ActionResult<Users> GetUser(int id)
+        [HttpGet("/user/getUser/{id}")]
+        public ActionResult<User> GetUser(int id)
         {
-            var user = _databaseService.GetUser(id).Result;
+            var user = _databaseService.GetUserAsync(id).Result;
 
             if (user == null)
             {
