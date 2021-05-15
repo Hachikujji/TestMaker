@@ -22,9 +22,5 @@ namespace TestMaker.Database.Services
         public Task<bool> IsUserExistsAsync(string username);
 
         public Task UpdateUserAsync(User user);
-
-        public string CreateJwtToken(User user);
-
-        public RefreshToken CreateRefreshToken();
     }
 }

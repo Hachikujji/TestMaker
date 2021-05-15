@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using TestMaker.Database;
 using TestMaker.Database.Models;
 using TestMaker.Database.Services;
+using TestMakerApi.Services;
 
 namespace TestMakerApi
 {
@@ -37,21 +38,7 @@ namespace TestMakerApi
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TestMakerApi", Version = "v1" });
             });
             services.AddScoped<IDatabaseService, DatabaseService>();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options =>
-                    {
-                        options.RequireHttpsMetadata = true;
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuer = true,
-                            ValidIssuer = AuthOptions.ISSUER,
-                            ValidateAudience = true,
-                            ValidAudience = AuthOptions.AUDIENCE,
-                            ValidateLifetime = true,
-                            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                            ValidateIssuerSigningKey = true,
-                        };
-                    });
+            services.AddSingleton<ITokenHandlerService, TokenHandlerService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

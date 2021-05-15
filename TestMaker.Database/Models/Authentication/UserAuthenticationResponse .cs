@@ -6,21 +6,23 @@ using TestMaker.Database.Entities;
 
 namespace TestMaker.Database.Models
 {
-    public class UserAuthorizationResponse
+    public class UserAuthenticationResponse
     {
         public int Id { get; set; }
         public string Username { get; set; }
         public string JwtToken { get; set; }
-
-        [JsonIgnore]
         public string RefreshToken { get; set; }
 
-        public UserAuthorizationResponse(User user, string jwtToken, string refreshToken)
+        public UserAuthenticationResponse(User user, string jwtToken, string refreshToken)
         {
             Id = user.Id;
             Username = user.Username;
             JwtToken = jwtToken;
             RefreshToken = refreshToken;
+        }
+        public UserAuthenticationResponse()
+        {
+
         }
     }
 }

@@ -15,11 +15,19 @@ namespace TestMaker.Database.Entities
         public int Id { get; set; }
 
         public string Token { get; set; }
-        public string ReplacedByToken { get; set; }
         public DateTime Expires { get; set; }
         public DateTime Created { get; set; }
-        public DateTime? Revoked { get; set; }
         public bool IsExpired => DateTime.UtcNow >= Expires;
-        public bool IsActive => Revoked == null && !IsExpired;
+
+        public RefreshToken(string token, DateTime expires, DateTime created)
+        {
+            Token = token;
+            Expires = expires;
+            Created = created;
+        }
+
+        public RefreshToken()
+        {
+        }
     }
 }

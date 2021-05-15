@@ -10,6 +10,11 @@ namespace TestMaker.Database.Models
     {
         public DbSet<User> Users { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Test> Test { get; set; }
+        public DbSet<TestAnswer> TestAnswer { get; set; }
+        public DbSet<TestAccess> TestAccess { get; set; }
+        public DbSet<TestResult> TestResult { get; set; }
+        public DbSet<TestResultAnswer> TestResultAnswer { get; set; }
 
         public DatabaseContext()
         {
@@ -18,7 +23,7 @@ namespace TestMaker.Database.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasData(new User { Id = 1, Username = "testUsername", Password = "testPassword" });
+            modelBuilder.Entity<User>().HasData(new User { Id = 1, Username = "123", Password = "321" });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

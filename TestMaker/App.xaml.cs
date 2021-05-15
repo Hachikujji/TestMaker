@@ -1,7 +1,7 @@
 ﻿using Prism.Ioc;
 using Prism.Modularity;
 using System.Windows;
-using TestMaker.Authorization;
+using TestMaker.UI;
 using TestMaker.Views;
 
 namespace TestMaker
@@ -22,7 +22,7 @@ namespace TestMaker
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
-            moduleCatalog.AddModule<AuthorizationModule>();
+            moduleCatalog.AddModule<UIModule>();
         }
     }
 }

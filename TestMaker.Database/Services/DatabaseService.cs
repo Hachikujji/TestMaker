@@ -77,37 +77,5 @@ namespace TestMaker.Database.Services
                 await db.SaveChangesAsync();
             }
         }
-
-        public string CreateJwtToken(User user)
-        {
-            var now = DateTime.UtcNow;
-            var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: now,
-                    claims: new Claim[]
-                    {
-                        new Claim(ClaimTypes.Name, user.Id.ToString())
-                    },
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-            return encodedJwt;
-        }
-
-        public RefreshToken CreateRefreshToken()
-        {
-            using (var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
-            {
-                var randomBytes = new byte[64];
-                rngCryptoServiceProvider.GetBytes(randomBytes);
-                return new RefreshToken
-                {
-                    Token = Convert.ToBase64String(randomBytes),
-                    Expires = DateTime.UtcNow.AddDays(7),
-                    Created = DateTime.UtcNow
-                };
-            }
-        }
     }
 }
