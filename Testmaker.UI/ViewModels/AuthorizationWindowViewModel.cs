@@ -135,7 +135,7 @@ namespace TestMaker.UI.ViewModels
             (PasswordBox as PasswordBox).Password = string.Empty;
         }
 
-        public async void GetUsers()
+        public void GetUsers()
         {
             //HttpResponseMessage response = await Client.GetAsync("getUsers");
             //if (response.IsSuccessStatusCode)

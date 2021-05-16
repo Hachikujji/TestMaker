@@ -1,96 +1,176 @@
-﻿<UserControl x:Class="TestMaker.UI.Views.MenuHubWindow"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:prism="http://prismlibrary.com/"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             prism:ViewModelLocator.AutoWireViewModel="True">
-    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1">
+﻿<UserControl
+    x:Class="TestMaker.UI.Views.MenuHubWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:prism="http://prismlibrary.com/"
+    prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <StackPanel
+            Grid.Column="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
             <StackPanel.Resources>
                 <Style TargetType="{x:Type Grid}">
                     <Setter Property="Margin" Value="40,0,0,0" />
                 </Style>
             </StackPanel.Resources>
-            <Grid Width="100" Height="100" Background="Transparent">
+            <Grid
+                Width="100"
+                Height="100"
+                Background="Transparent">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseEnter">
                         <i:ChangePropertyAction PropertyName="Background" Value="#ddeff7" />
-                        <i:ChangePropertyAction PropertyName="Foreground" Value="Orange" TargetName="AddButton" />
+                        <i:ChangePropertyAction
+                            PropertyName="Foreground"
+                            TargetName="AddButton"
+                            Value="Orange" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseLeave">
                         <i:ChangePropertyAction PropertyName="Background" Value="Transparent" />
-                        <i:ChangePropertyAction PropertyName="Foreground" Value="Black" TargetName="AddButton" />
+                        <i:ChangePropertyAction
+                            PropertyName="Foreground"
+                            TargetName="AddButton"
+                            Value="Black" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                         <i:InvokeCommandAction Command="{Binding DataContext.AddButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <materialDesign:PackIcon Kind="PlusBoxOutline" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="80" Height="80" Name="AddButton" />
+                <materialDesign:PackIcon
+                    Name="AddButton"
+                    Width="80"
+                    Height="80"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Kind="PlusBoxOutline" />
             </Grid>
-            <Grid Width="100" Height="100" Background="Transparent">
+            <Grid
+                Width="100"
+                Height="100"
+                Background="Transparent">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseEnter">
                         <i:ChangePropertyAction PropertyName="Background" Value="#ddeff7" />
-                        <i:ChangePropertyAction PropertyName="Foreground" Value="Orange" TargetName="ViewListButton" />
+                        <i:ChangePropertyAction
+                            PropertyName="Foreground"
+                            TargetName="ViewListButton"
+                            Value="Orange" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseLeave">
                         <i:ChangePropertyAction PropertyName="Background" Value="Transparent" />
-                        <i:ChangePropertyAction PropertyName="Foreground" Value="Black" TargetName="ViewListButton" />
+                        <i:ChangePropertyAction
+                            PropertyName="Foreground"
+                            TargetName="ViewListButton"
+                            Value="Black" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                         <i:InvokeCommandAction Command="{Binding DataContext.ReturnButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <materialDesign:PackIcon Kind="FormatListBulleted" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="80" Height="80" x:Name="ViewListButton" />
+                <materialDesign:PackIcon
+                    x:Name="ViewListButton"
+                    Width="80"
+                    Height="80"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Kind="FormatListBulleted" />
             </Grid>
-            <Grid Width="100" Height="100" Background="Transparent">
+            <Grid
+                Width="100"
+                Height="100"
+                Background="Transparent">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseEnter">
                         <i:ChangePropertyAction PropertyName="Background" Value="#ddeff7" />
-                        <i:ChangePropertyAction PropertyName="Foreground" Value="Orange" TargetName="ShowTestsButton" />
+                        <i:ChangePropertyAction
+                            PropertyName="Foreground"
+                            TargetName="ShowTestsButton"
+                            Value="Orange" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseLeave">
                         <i:ChangePropertyAction PropertyName="Background" Value="Transparent" />
-                        <i:ChangePropertyAction PropertyName="Foreground" Value="Black" TargetName="ShowTestsButton" />
+                        <i:ChangePropertyAction
+                            PropertyName="Foreground"
+                            TargetName="ShowTestsButton"
+                            Value="Black" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                         <i:InvokeCommandAction Command="{Binding DataContext.ReturnButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <materialDesign:PackIcon Kind="Web" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="80" Height="80" x:Name="ShowTestsButton" />
+                <materialDesign:PackIcon
+                    x:Name="ShowTestsButton"
+                    Width="80"
+                    Height="80"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Kind="Web" />
             </Grid>
-            <Grid Width="100" Height="100" Background="Transparent">
+            <Grid
+                Width="100"
+                Height="100"
+                Background="Transparent">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseEnter">
                         <i:ChangePropertyAction PropertyName="Background" Value="#ddeff7" />
-                        <i:ChangePropertyAction PropertyName="Foreground" Value="Orange" TargetName="ResultsButton" />
+                        <i:ChangePropertyAction
+                            PropertyName="Foreground"
+                            TargetName="ResultsButton"
+                            Value="Orange" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseLeave">
                         <i:ChangePropertyAction PropertyName="Background" Value="Transparent" />
-                        <i:ChangePropertyAction PropertyName="Foreground" Value="Black" TargetName="ResultsButton" />
+                        <i:ChangePropertyAction
+                            PropertyName="Foreground"
+                            TargetName="ResultsButton"
+                            Value="Black" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                         <i:InvokeCommandAction Command="{Binding DataContext.ReturnButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <materialDesign:PackIcon Kind="PlaylistCheck" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="80" Height="80" x:Name="ResultsButton" />
+                <materialDesign:PackIcon
+                    x:Name="ResultsButton"
+                    Width="80"
+                    Height="80"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Kind="PlaylistCheck" />
             </Grid>
-            <Grid Width="100" Height="100" Background="Transparent">
+            <Grid
+                Width="100"
+                Height="100"
+                Background="Transparent">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseEnter">
                         <i:ChangePropertyAction PropertyName="Background" Value="#ddeff7" />
-                        <i:ChangePropertyAction PropertyName="Foreground" Value="Orange" TargetName="LogoutButton" />
+                        <i:ChangePropertyAction
+                            PropertyName="Foreground"
+                            TargetName="LogoutButton"
+                            Value="Orange" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseLeave">
                         <i:ChangePropertyAction PropertyName="Background" Value="Transparent" />
-                        <i:ChangePropertyAction PropertyName="Foreground" Value="Black" TargetName="LogoutButton" />
+                        <i:ChangePropertyAction
+                            PropertyName="Foreground"
+                            TargetName="LogoutButton"
+                            Value="Black" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                         <i:InvokeCommandAction Command="{Binding DataContext.ReturnButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <materialDesign:PackIcon Kind="Logout" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="80" Height="80" x:Name="LogoutButton" />
+                <materialDesign:PackIcon
+                    x:Name="LogoutButton"
+                    Width="80"
+                    Height="80"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Kind="Logout" />
             </Grid>
         </StackPanel>
     </Grid>

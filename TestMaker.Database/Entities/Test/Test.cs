@@ -14,9 +14,9 @@ namespace TestMaker.Database.Entities
         public string Name { get; set; }
         public User Creator { get; set; }
         public int Attempts { get; set; }
-        public List<TestQuestion> Questions { get; set; }
+        public IList<TestQuestion> Questions { get; set; }
 
-        public Test(string name, User creator, int attempts, List<TestQuestion> questions)
+        public Test(string name, User creator, int attempts, IList<TestQuestion> questions)
         {
             Name = name;
             Creator = creator;

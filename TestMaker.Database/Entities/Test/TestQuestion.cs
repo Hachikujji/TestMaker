@@ -11,9 +11,9 @@ namespace TestMaker.Database.Entities
         public int Id { get; set; }
 
         public string Question { get; set; }
-        public List<TestAnswer> Answers { get; set; }
+        public IList<TestAnswer> Answers { get; set; }
 
-        public TestQuestion(string question, List<TestAnswer> answers)
+        public TestQuestion(string question, IList<TestAnswer> answers)
         {
             Question = question;
             Answers = answers;
