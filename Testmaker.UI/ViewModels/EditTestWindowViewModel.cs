@@ -1,31 +1,56 @@
-﻿using Prism.Commands;
+﻿using Newtonsoft.Json;
+using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 using TestMaker.Database.Entities;
+using TestMaker.Database.Models;
+using TestMaker.Stuff;
+using TestMaker.UI.Services;
 
 namespace TestMaker.UI.ViewModels
 {
-    public class EditTestWindowViewModel : BindableBase
+    public class EditTestWindowViewModel : ViewModelBase
     {
+        #region Private Fields
+
         private Test _test;
+        private int _attempts;
+        private string _testName;
+        private TestQuestion _testQuestion;
+        private ITokenHandler _tokenHandler;
+
+        #endregion Private Fields
+
+        #region Public Properties
 
         public Test Test
         {
             get { return _test; }
             set { SetProperty(ref _test, value); }
         }
-        private int _attempts;
+
+        private bool _isTestEditing;
+
+        public bool IsTestEditing
+        {
+            get { return _isTestEditing; }
+            set { SetProperty(ref _isTestEditing, value); }
+        }
 
         public int Attempts
         {
             get { return _attempts; }
             set { SetProperty(ref _attempts, value); }
         }
-        private string _testName;
 
         public string TestName
         {
@@ -33,7 +58,13 @@ namespace TestMaker.UI.ViewModels
             set { SetProperty(ref _testName, value); }
         }
 
-        private TestQuestion _testQuestion;
+        private string _createTestButtonName;
+
+        public string CreateTestButtonName
+        {
+            get { return _createTestButtonName; }
+            set { SetProperty(ref _createTestButtonName, value); }
+        }
 
         public TestQuestion TestQuestion
         {
@@ -47,26 +78,38 @@ namespace TestMaker.UI.ViewModels
         public DelegateCommand<object> RemoveAnswerButtonEvent { get; }
         public DelegateCommand<object> RemoveAnswerEnterButtonEvent { get; }
         public DelegateCommand CreateTestButtonEvent { get; }
+        public DelegateCommand ReturnButtonEvent { get; }
         public ObservableCollection<int> NumbersOfAttempts { get; set; }
 
-        public EditTestWindowViewModel()
+        #endregion Public Properties
+
+        #region Public Constructors
+
+        public EditTestWindowViewModel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
         {
+            _tokenHandler = tokenHandler;
             AddQuestionButtonEvent = new DelegateCommand(AddQuestionButton);
             AddAnswerButtonEvent = new DelegateCommand<object>(AddAnswerButton);
             RemoveQuestionButtonEvent = new DelegateCommand<object>(RemoveQuestionButton);
             RemoveAnswerButtonEvent = new DelegateCommand<object>(RemoveAnswerButton);
+            ReturnButtonEvent = new DelegateCommand(ReturnButton);
             RemoveAnswerEnterButtonEvent = new DelegateCommand<object>(RemoveAnswerEnterButton);
-            CreateTestButtonEvent = new DelegateCommand(CreateTestButton);
-            Test = new Test("New test", new User(), 1, new ObservableCollection<TestQuestion>());
+            CreateTestButtonEvent = new DelegateCommand(async () => await CreateTestButton());
+            Test = new Test("New test", StaticProperties.CurrentUserResponseHeader.Username, 0, new ObservableCollection<TestQuestion>());
             NumbersOfAttempts = new ObservableCollection<int>();
             for (int i = 1; i < 6; i++)
                 NumbersOfAttempts.Add(i);
             Test.Questions.Add(new TestQuestion($"New question", new ObservableCollection<TestAnswer>()));
+            IsTestEditing = true;
         }
+
+        #endregion Public Constructors
+
+        #region Public Methods
 
         public void AddQuestionButton()
         {
-            Test.Questions.Add(new TestQuestion($"New Question", new ObservableCollection<TestAnswer>()));
+            Test.Questions.Add(new TestQuestion($"New question", new ObservableCollection<TestAnswer>()));
         }
 
         public void AddAnswerButton(object testQuestion)
@@ -93,13 +136,180 @@ namespace TestMaker.UI.ViewModels
             TestQuestion = Question;
         }
 
-        public void CreateTestButton()
+        public async Task CreateTestButton()
         {
-            Test.Attempts = Attempts;
-            Test.Creator = new User();
-            Test.Name = TestName;
-            var a = Test;
-            Debug.WriteLine(a);
+            if (Test.Attempts == 0)
+            {
+                MessageBox.Show("Attempt count error");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(Test.Name))
+            {
+                MessageBox.Show("Test name error");
+                return;
+            }
+            if (Test.Questions.Count == 0)
+            {
+                MessageBox.Show("Question count error");
+                return;
+            }
+            foreach (var question in Test.Questions)
+            {
+                if (string.IsNullOrWhiteSpace(question.Question))
+                {
+                    MessageBox.Show("One of question name is empty");
+                    return;
+                }
+                if (question.Answers.Count < 2)
+                {
+                    MessageBox.Show($"Answer count error in {question.Question}");
+                    return;
+                }
+                int count = 0;
+                foreach (var answer in question.Answers)
+                {
+                    if (string.IsNullOrWhiteSpace(answer.Answer))
+                    {
+                        MessageBox.Show($"Answer name error in {question.Question}");
+                        return;
+                    }
+                    if (answer.IsRight)
+                        count++;
+                }
+                if (count == 0)
+                {
+                    MessageBox.Show($"Right answers count error in {question.Question}");
+                    return;
+                }
+            }
+            if (IsTestEditing)
+            {
+                if (await TrySendTest())
+                {
+                }
+                else
+                {
+                    if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                    {
+                        await TrySendTest();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Your token is expired.");
+                        RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
+                    }
+                }
+            }
+            else
+            {
+                if (await TryUpdateTest())
+                {
+                }
+                else
+                {
+                    if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                    {
+                        await TryUpdateTest();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Your token is expired.");
+                        RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
+                    }
+                }
+            }
         }
+
+        public override async void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            int editTestId = 0;
+            string editTestIdString;
+            if (navigationContext.Parameters.Count != 0)
+            {
+                editTestIdString = navigationContext.Parameters["TestId"].ToString();
+                if (!string.IsNullOrWhiteSpace(editTestIdString))
+                    int.TryParse(editTestIdString, out editTestId);
+                if (editTestId > 0)
+                    if (!await TryGetTest(editTestId))
+                    {
+                        if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                        {
+                            await TryGetTest(editTestId);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Your token is expired.");
+                            RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
+                        }
+                    }
+            }
+            else
+            {
+                Test = new Test("New test", StaticProperties.CurrentUserResponseHeader.Username, 0, new ObservableCollection<TestQuestion>());
+                IsTestEditing = true;
+                CreateTestButtonName = "Create Test";
+            }
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        public void ReturnButton()
+        {
+            RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
+        }
+
+        private async Task<bool> TrySendTest()
+        {
+            var json = JsonConvert.SerializeObject(Test);
+            var response = await StaticProperties.Client.PostAsync("/test/addTest", new StringContent(json, Encoding.UTF8, "application/json"));
+            if (response.IsSuccessStatusCode)
+            {
+                RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
+                return true;
+            }
+            else
+                return false;
+        }
+
+        private async Task<bool> TryUpdateTest()
+        {
+            var json = JsonConvert.SerializeObject(Test);
+            var response = await StaticProperties.Client.PostAsync("/test/updateTest", new StringContent(json, Encoding.UTF8, "application/json"));
+            if (response.IsSuccessStatusCode)
+            {
+                RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
+                return true;
+            }
+            else
+                return false;
+        }
+
+        private async Task<bool> TryGetTest(int testId)
+        {
+            var request = JsonConvert.SerializeObject(new GetTestRequest(testId));
+            var response = await StaticProperties.Client.PostAsync("/test/getTest", new StringContent(request, Encoding.UTF8, "application/json"));
+            if (response.IsSuccessStatusCode)
+            {
+                try
+                {
+                    var testJson = await response.Content.ReadAsStringAsync();
+                    var test = JsonConvert.DeserializeObject<Test>(testJson);
+                    Test = new Test(test);
+                    IsTestEditing = false;
+                    CreateTestButtonName = "Update test";
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show($"Error when tried to get test: {e}");
+                }
+                return true;
+            }
+            else
+                return false;
+        }
+
+        #endregion Private Methods
     }
 }

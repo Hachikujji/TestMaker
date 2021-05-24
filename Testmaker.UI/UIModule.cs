@@ -1,7 +1,8 @@
 ﻿using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
-using TestMaker.Common;
+using TestMaker.Stuff;
+using TestMaker.UI.Services;
 using TestMaker.UI.Views;
 
 namespace TestMaker.UI
@@ -11,7 +12,7 @@ namespace TestMaker.UI
         public void OnInitialized(IContainerProvider containerProvider)
         {
             var regionManager = containerProvider.Resolve<IRegionManager>();
-            regionManager.RequestNavigate(RegionNames.ContentRegion, nameof(EditTestWindow));
+            regionManager.RequestNavigate(StaticProperties.ContentRegion, nameof(AuthorizationWindow));
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
@@ -19,6 +20,13 @@ namespace TestMaker.UI
             containerRegistry.RegisterForNavigation<AuthorizationWindow>();
             containerRegistry.RegisterForNavigation<MenuHubWindow>();
             containerRegistry.RegisterForNavigation<EditTestWindow>();
+            containerRegistry.RegisterForNavigation<UserTestsWindow>();
+            containerRegistry.RegisterForNavigation<AllowedTestsWindow>();
+            containerRegistry.RegisterForNavigation<TestResultsWindow>();
+            containerRegistry.RegisterForNavigation<UserResultsWindow>();
+            containerRegistry.RegisterForNavigation<CompletionTestWindow>();
+            containerRegistry.RegisterForNavigation<UserTestResultsWindow>();
+            containerRegistry.RegisterSingleton<ITokenHandler, TokenHandler>();
         }
     }
 }

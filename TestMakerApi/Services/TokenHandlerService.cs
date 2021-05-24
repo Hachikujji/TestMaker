@@ -12,11 +12,11 @@ namespace TestMakerApi.Services
 {
     public class TokenHandlerService : ITokenHandlerService
     {
-        private const string ISSUER = "TestMakerServer"; // издатель токена
-        private const string AUDIENCE = "TestMakerClient"; // потребитель токена
-        private const string KEY = "randomKey123randomKey321";   // ключ для шифрации
-        private const int LIFETIME = 5; // время жизни токена
-        private const int REFRESH_LIFETIME = 1; // время жизни токена
+        private const string ISSUER = "TestMakerServer";
+        private const string AUDIENCE = "TestMakerClient";
+        private const string KEY = "randomKey123randomKey321";
+        private const int LIFETIME = 10; // mins
+        private const int REFRESH_LIFETIME = 4; // hours
 
         private JwtSecurityTokenHandler _TokenHandler = new JwtSecurityTokenHandler();
 
@@ -26,6 +26,7 @@ namespace TestMakerApi.Services
             {
                 ValidateLifetime = true,
                 ValidIssuer = ISSUER,
+                ClockSkew = TimeSpan.Zero,
                 ValidAudience = AUDIENCE,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(KEY))
             };
@@ -43,7 +44,7 @@ namespace TestMakerApi.Services
                     issuer: ISSUER,
                     audience: AUDIENCE,
                     notBefore: now,
-                    expires: now.Add(TimeSpan.FromMinutes(LIFETIME)),
+                    expires: now.Add(TimeSpan.FromSeconds(LIFETIME)),
                     signingCredentials: new SigningCredentials(GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
             return encodedJwt;
@@ -58,7 +59,7 @@ namespace TestMakerApi.Services
                 return new RefreshToken
                 {
                     Token = Convert.ToBase64String(randomBytes),
-                    Expires = DateTime.UtcNow.AddDays(REFRESH_LIFETIME),
+                    Expires = DateTime.UtcNow.AddHours(REFRESH_LIFETIME),
                     Created = DateTime.UtcNow
                 };
             }

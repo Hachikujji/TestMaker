@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -10,23 +11,35 @@ namespace TestMaker.Database.Entities
         [Key]
         public int Id { get; set; }
 
-        public string Name { get; set; }
         public User User { get; set; }
+        public Test Test { get; set; }
         public DateTime Date { get; set; }
         public float Result { get; set; }
-        public List<TestResultAnswer> Answers { get; set; }
+        public IList<TestResultQuestion> Questions { get; set; }
 
-        public TestResult(string name, User user, DateTime date, float result, List<TestResultAnswer> answers)
+        public TestResult(Test test, User user, DateTime date, float result, IList<TestResultQuestion> questions)
         {
-            Name = name;
+            Test = test;
             User = user;
             Date = date;
             Result = result;
-            Answers = answers;
+            Questions = questions;
+        }
+
+        public TestResult(Test test)
+        {
+            Test = test;
+            Result = 0;
+            Questions = new ObservableCollection<TestResultQuestion>();
+            foreach (var question in test.Questions)
+            {
+                Questions.Add(new TestResultQuestion(question));
+            }
         }
 
         public TestResult()
         {
+            Questions = new ObservableCollection<TestResultQuestion>();
         }
     }
 }

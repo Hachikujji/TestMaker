@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <AssemblyName>Testmaker.UI</AssemblyName>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
-    <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TestMaker.Common\TestMaker.Common.csproj" />
-    <ProjectReference Include="..\TestMaker.Database\TestMaker.Database.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\AuthorizationWindow.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<AssemblyName>Testmaker.UI</AssemblyName>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
+		<PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\TestMaker.Database\TestMaker.Database.csproj" />
+		<ProjectReference Include="..\TestMaker.Stuff\TestMaker.Stuff.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Page Update="Views\AuthorizationWindow.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+		</Page>
+	</ItemGroup>
 </Project>

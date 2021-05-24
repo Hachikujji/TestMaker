@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <AssemblyName>TestMaker</AssemblyName>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
-    <PackageReference Include="Prism.Unity" Version="8.0.0.1909" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TestMaker.Common\TestMaker.Common.csproj" />
-    <ProjectReference Include="..\Testmaker.UI\TestMaker.UI.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<AssemblyName>TestMaker</AssemblyName>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
+		<PackageReference Include="Prism.Unity" Version="8.0.0.1909" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\TestMaker.Stuff\TestMaker.Stuff.csproj" />
+		<ProjectReference Include="..\Testmaker.UI\TestMaker.UI.csproj" />
+	</ItemGroup>
 </Project>

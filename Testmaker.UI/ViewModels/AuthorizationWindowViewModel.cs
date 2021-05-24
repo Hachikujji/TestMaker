@@ -12,7 +12,7 @@ using TestMaker.Database.Entities;
 using TestMaker.Database.Models;
 using Newtonsoft.Json;
 using Prism.Regions;
-using TestMaker.Common;
+using TestMaker.Stuff;
 using System.Windows;
 using System.Timers;
 using System.Windows.Controls;
@@ -28,16 +28,16 @@ namespace TestMaker.UI.ViewModels
             _errorTimer.AutoReset = false;
             _errorTimer.Interval = 2000;
             _errorTimer.Elapsed += ErrorTimerElapsedEvent;
-            //http client config
-            Client = new HttpClient();
-            Client.DefaultRequestHeaders.Accept.Clear();
-            Client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-            Client.BaseAddress = new Uri("https://localhost:44336/");
             LoginButtonEvent = new DelegateCommand<object>(LoginButton);
             RegistrationButtonEvent = new DelegateCommand<object>(RegistrationButton);
             GetUsersEvent = new DelegateCommand(GetUsers);
             AuthorizationErrorLogVisibility = Visibility.Collapsed;
+
+            StaticProperties.Client = new HttpClient();
+            StaticProperties.Client.DefaultRequestHeaders.Accept.Clear();
+            StaticProperties.Client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+            StaticProperties.Client.BaseAddress = new Uri("https://localhost:44336/");
         }
 
         #endregion Public Constructors
@@ -62,8 +62,6 @@ namespace TestMaker.UI.ViewModels
             set { SetProperty(ref _username, value); }
         }
 
-        public HttpClient Client { get; set; }
-
         public DelegateCommand<object> LoginButtonEvent { get; }
 
         public DelegateCommand<object> RegistrationButtonEvent { get; }
@@ -83,14 +81,17 @@ namespace TestMaker.UI.ViewModels
             var json = JsonConvert.SerializeObject(userRequest);
             try
             {
-                HttpResponseMessage response = await Client.PostAsync("user/authorization", new StringContent(json, Encoding.UTF8, "application/json"));
+                HttpResponseMessage response = await StaticProperties.Client.PostAsync("user/authorization", new StringContent(json, Encoding.UTF8, "application/json"));
                 if (response.IsSuccessStatusCode)
                 {
                     var body = await response.Content.ReadAsStringAsync();
-                    _currentUser = JsonConvert.DeserializeObject<UserAuthenticationResponse>(body);
+                    var _currentUser = JsonConvert.DeserializeObject<UserAuthenticationResponse>(body);
+                    StaticProperties.CurrentUserResponseHeader = _currentUser;
                     _userAuthorizationRequest = new UserAuthorizationRequest(_currentUser);
-                    Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(_userAuthorizationRequest.ToString());
-                    RegionManager.RequestNavigate(RegionNames.ContentRegion, "MenuHubWindow");
+                    var authString = JsonConvert.SerializeObject(_userAuthorizationRequest);
+                    StaticProperties.Client.DefaultRequestHeaders.Remove("Authorization");
+                    StaticProperties.Client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", authString);
+                    RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
                 }
                 else
                 {
@@ -110,15 +111,19 @@ namespace TestMaker.UI.ViewModels
         {
             string password = (PasswordBox as PasswordBox)?.Password;
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(password))
+            {
+                AuthorizationError = "Username or password is empty";
+                _errorTimer.Start();
                 return;
+            }
             var userRequest = new UserAuthenticationRequest(Username, password);
             var json = JsonConvert.SerializeObject(userRequest);
             try
             {
-                HttpResponseMessage isUserExistsResponse = await Client.GetAsync($"/user/isUserExists/{Username}");
+                HttpResponseMessage isUserExistsResponse = await StaticProperties.Client.GetAsync($"/user/isUserExists/{Username}");
                 if (!isUserExistsResponse.IsSuccessStatusCode)
                 {
-                    HttpResponseMessage addUserResponse = await Client.PostAsync("user/addUser", new StringContent(json, Encoding.UTF8, "application/json"));
+                    HttpResponseMessage addUserResponse = await StaticProperties.Client.PostAsync("user/addUser", new StringContent(json, Encoding.UTF8, "application/json"));
                     LoginButton(PasswordBox);
                 }
                 else
@@ -145,7 +150,7 @@ namespace TestMaker.UI.ViewModels
             //}
             //else
             //    Password = response.StatusCode.ToString();
-            RegionManager.RequestNavigate(RegionNames.ContentRegion, "MenuHubWindow");
+            RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
         }
 
         private void ErrorTimerElapsedEvent(object sender, ElapsedEventArgs e)
@@ -163,7 +168,6 @@ namespace TestMaker.UI.ViewModels
         // Visibility of authorization error message
         private Visibility _authorizationErrorLogVisibility;
 
-        private UserAuthenticationResponse _currentUser;
         private UserAuthorizationRequest _userAuthorizationRequest;
 
         private string _username;

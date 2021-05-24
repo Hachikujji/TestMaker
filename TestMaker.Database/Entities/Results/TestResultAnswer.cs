@@ -24,5 +24,12 @@ namespace TestMaker.Database.Entities
         public TestResultAnswer()
         {
         }
+
+        public TestResultAnswer(TestAnswer answer)
+        {
+            Answer = answer.Answer;
+            IsRight = answer.IsRight;
+            IsSelected = false;
+        }
     }
 }

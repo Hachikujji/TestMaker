@@ -57,7 +57,7 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <ScrollViewer HorizontalScrollBarVisibility="Hidden" Style="{StaticResource LeftScrollViewer}">
-            <Grid>
+            <Grid DataContext="{Binding Test, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="auto" />
@@ -67,7 +67,7 @@
                     Grid.Column="0"
                     HorizontalAlignment="Center"
                     Grid.IsSharedSizeScope="True"
-                    ItemsSource="{Binding Test.Questions, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                    ItemsSource="{Binding Questions, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -108,7 +108,7 @@
                                                     <TextBox
                                                         Grid.Column="1"
                                                         MinWidth="400"
-                                                        MaxWidth="600"
+                                                        MaxWidth="500"
                                                         Margin="0,0,10,0"
                                                         HorizontalAlignment="Center"
                                                         Text="{Binding Answer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -163,6 +163,38 @@
                             BorderThickness="1"
                             CornerRadius="6">
                             <StackPanel>
+                                <Grid
+                                    Grid.Row="0"
+                                    Grid.Column="3"
+                                    Width="150"
+                                    Height="60"
+                                    Background="Transparent">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseEnter">
+                                            <i:ChangePropertyAction
+                                                PropertyName="Foreground"
+                                                TargetName="LogoutButton"
+                                                Value="Orange" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="MouseLeave">
+                                            <i:ChangePropertyAction PropertyName="Background" Value="Transparent" />
+                                            <i:ChangePropertyAction
+                                                PropertyName="Foreground"
+                                                TargetName="LogoutButton"
+                                                Value="Black" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                            <i:InvokeCommandAction Command="{Binding DataContext.ReturnButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <materialDesign:PackIcon
+                                        x:Name="LogoutButton"
+                                        Width="40"
+                                        Height="40"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Kind="ArrowRightBold" />
+                                </Grid>
                                 <Label
                                     HorizontalContentAlignment="Center"
                                     Content="Test name "
@@ -170,7 +202,7 @@
                                 <TextBox
                                     Margin="10"
                                     Background="#EEBA85"
-                                    Text="{Binding DataContext.TestName, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     TextAlignment="Center" />
                             </StackPanel>
                         </Border>
@@ -189,7 +221,7 @@
                                     VerticalContentAlignment="Center"
                                     Background="#EEBA85"
                                     ItemsSource="{Binding DataContext.NumbersOfAttempts, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                                    SelectedValue="{Binding DataContext.Attempts, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                                    SelectedValue="{Binding Attempts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -204,6 +236,6 @@
             Grid.Row="2"
             Background="LightGreen"
             Command="{Binding DataContext.CreateTestButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-            Content="Create test" />
+            Content="{Binding DataContext.CreateTestButtonName, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
     </Grid>
 </UserControl>

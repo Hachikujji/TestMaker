@@ -10,10 +10,14 @@ namespace TestMaker.Database.Models
     {
         public DbSet<User> Users { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+
         public DbSet<Test> Test { get; set; }
+        public DbSet<TestQuestion> TestQuestion { get; set; }
         public DbSet<TestAnswer> TestAnswer { get; set; }
         public DbSet<TestAccess> TestAccess { get; set; }
+
         public DbSet<TestResult> TestResult { get; set; }
+        public DbSet<TestResultQuestion> TestResultQuestion { get; set; }
         public DbSet<TestResultAnswer> TestResultAnswer { get; set; }
 
         public DatabaseContext()

@@ -68,7 +68,7 @@
                             Value="Black" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                        <i:InvokeCommandAction Command="{Binding DataContext.ReturnButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                        <i:InvokeCommandAction Command="{Binding DataContext.TestListButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <materialDesign:PackIcon
@@ -99,7 +99,7 @@
                             Value="Black" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                        <i:InvokeCommandAction Command="{Binding DataContext.ReturnButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                        <i:InvokeCommandAction Command="{Binding DataContext.AllowedTestListButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <materialDesign:PackIcon
@@ -130,7 +130,7 @@
                             Value="Black" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                        <i:InvokeCommandAction Command="{Binding DataContext.ReturnButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                        <i:InvokeCommandAction Command="{Binding DataContext.UserResultsButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <materialDesign:PackIcon

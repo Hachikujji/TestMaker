@@ -33,9 +33,32 @@ namespace TestMakerApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(config =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TestMakerApi", Version = "v1" });
+                config.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme()
+                {
+                    Type = SecuritySchemeType.ApiKey,
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Description = "API Key",
+                    Scheme = "ApiKeyScheme"
+                });
+                var key = new OpenApiSecurityScheme()
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Authorization"
+                    },
+                    In = ParameterLocation.Header
+                };
+
+                var requirement = new OpenApiSecurityRequirement
+                {
+                    {key, new List<string>() }
+                };
+                config.AddSecurityRequirement(requirement);
+                config.SwaggerDoc("v1", new OpenApiInfo { Title = "TestMakerApi", Version = "v1" });
             });
             services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddSingleton<ITokenHandlerService, TokenHandlerService>();
