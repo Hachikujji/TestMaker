@@ -24,8 +24,14 @@ namespace TestMakerApi.Controllers
     [Route("[controller]")]
     public class AuthorizationController : Controller
     {
+        #region Private Fields
+
         private IDatabaseService _databaseService;
         private ITokenHandlerService _tokenHandlerService;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public AuthorizationController(IDatabaseService databaseService, ITokenHandlerService tokenHandlerService)
         {
@@ -33,26 +39,40 @@ namespace TestMakerApi.Controllers
             _tokenHandlerService = tokenHandlerService;
         }
 
+        #endregion Public Constructors
+
+        #region Public Methods
+
+        /// <summary>
+        /// Add user
+        /// </summary>
+        /// <param name="userInfo">Username and password</param>
+        /// <returns>Ok() if added, BadRequest() if username of password is not valid or already exists, NotFound() if db error</returns>
         [HttpPost("/user/addUser")]
         public async Task<ActionResult<User>> AddUsers(UserAuthenticationRequest userInfo)
         {
-            if (!string.IsNullOrWhiteSpace(userInfo.Username) && !string.IsNullOrWhiteSpace(userInfo.Password))
+            var user = new User(userInfo.Username, userInfo.Password);
+            try
             {
-                var user = new User(userInfo.Username, userInfo.Password);
-                try
+                if (!string.IsNullOrWhiteSpace(userInfo.Username) && !string.IsNullOrWhiteSpace(userInfo.Password) && !(await _databaseService.IsUserExistsAsync(userInfo.Username)))
                 {
                     await _databaseService.AddUserAsync(user);
                     return Ok(user);
                 }
-                catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
-                {
-                    return NotFound($"Database error: {e}");
-                }
+                else
+                    return BadRequest("Invalid username or password.");
             }
-            else
-                return BadRequest(new { errorText = "Invalid username or password." });
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
+            {
+                return NotFound($"Database error: {e}");
+            }
         }
 
+        /// <summary>
+        /// Authorization of user. Creates tokens and send them to user
+        /// </summary>
+        /// <param name="model">username and password</param>
+        /// <returns>Ok(UserAuthenticationResponce), BadRequest() if user not found, NotFound() if db error</returns>
         [HttpPost("/user/authorization")]
         public async Task<ActionResult<UserAuthenticationResponse>> Authorization(UserAuthenticationRequest model)
         {
@@ -61,10 +81,10 @@ namespace TestMakerApi.Controllers
             {
                 user = await _databaseService.GetUserAsync(model.Username, model.Password);
                 if (user == null)
-                    return BadRequest(new { errorText = "Invalid username or password." });
+                    return BadRequest("Invalid username or password.");
                 var jwtToken = _tokenHandlerService.CreateJwtToken();
                 var refreshToken = _tokenHandlerService.CreateRefreshToken();
-                await _databaseService.UpdateUserAsync(user, refreshToken);
+                await _databaseService.UpdateUserRefreshTokenAsync(user, refreshToken);
                 return Ok(new UserAuthenticationResponse(user, jwtToken, refreshToken.Token));
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
@@ -73,6 +93,11 @@ namespace TestMakerApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Validates JWT token
+        /// </summary>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns></returns>
         [HttpGet("/user/validateToken")]
         public ActionResult ValidateToken([FromHeader] string Authorization)
         {
@@ -93,38 +118,21 @@ namespace TestMakerApi.Controllers
             return Ok("Token is valid");
         }
 
-        //[HttpGet("/user/getUser/{id}")]
-        //public async Task<ActionResult<User>> GetUserById(int id, [FromHeader] string Authorization)
-        //{
-        //    UserAuthorizationRequest userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
-        //    if (!_tokenHandlerService.ValidateToken(userHeader.JwtToken))
-        //        return Unauthorized("Token error");
-        //    User user;
-        //    try
-        //    {
-        //        user = await _databaseService.GetUserAsync(id);
-        //        if (user == null)
-        //            return NotFound();
-        //        return user;
-        //    }
-        //    catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
-        //    {
-        //        return NotFound($"Database error: {e}");
-        //    }
-        //}
-
+        /// <summary>
+        /// Is user exists
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <returns> Ok(true) if exists, else returns false, NotFound() if db error</returns>
         [HttpGet("/user/isUserExists/{username}")]
-        public async Task<ActionResult<User>> IsUserExists(string username)
+        public async Task<ActionResult<bool>> IsUserExists(string username)
         {
             bool isUserExists;
             try
             {
                 isUserExists = await _databaseService.IsUserExistsAsync(username);
-                if (isUserExists == false)
-                    return NotFound(isUserExists);
                 return Ok(isUserExists);
             }
-            catch (Exception e)
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
                 return NotFound($"Database error: {e}");
             }
@@ -171,5 +179,7 @@ namespace TestMakerApi.Controllers
                 return NotFound($"Database error: {e}");
             }
         }
+
+        #endregion Public Methods
     }
 }

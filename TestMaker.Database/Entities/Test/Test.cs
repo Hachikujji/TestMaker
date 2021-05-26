@@ -27,20 +27,9 @@ namespace TestMaker.Database.Entities
             Questions = questions;
         }
 
-        public Test(Test test)
-        {
-            Id = test.Id;
-            Name = test.Name;
-            CreatorName = test.CreatorName;
-            Attempts = test.Attempts;
-            Questions = new ObservableCollection<TestQuestion>(test.Questions);
-            for (int i = 0; i < test.Questions.Count; i++)
-                Questions[i].Answers = new ObservableCollection<TestAnswer>(test.Questions[i].Answers);
-        }
-
         public Test()
         {
-            Questions = new List<TestQuestion>();
+            Questions = new ObservableCollection<TestQuestion>();
         }
     }
 }

@@ -20,9 +20,25 @@ namespace TestMaker.UI.ViewModels
 {
     public class CompletionTestWindowViewModel : ViewModelBase
     {
+        #region Private Fields
+
         private ITokenHandler _tokenHandler;
 
         private TestResult _test;
+
+        #endregion Private Fields
+
+        #region Public Constructors
+
+        public CompletionTestWindowViewModel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
+        {
+            SendTestResultButtonEvent = new DelegateCommand(async () => await SendTestResultButton());
+            _tokenHandler = tokenHandler;
+        }
+
+        #endregion Public Constructors
+
+        #region Public Properties
 
         public TestResult Test
         {
@@ -32,12 +48,14 @@ namespace TestMaker.UI.ViewModels
 
         public DelegateCommand SendTestResultButtonEvent { get; }
 
-        public CompletionTestWindowViewModel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
-        {
-            SendTestResultButtonEvent = new DelegateCommand(async () => await SendTestButton());
-            _tokenHandler = tokenHandler;
-        }
+        #endregion Public Properties
 
+        #region Public Methods
+
+        /// <summary>
+        /// Navigated to UserControl event
+        /// </summary>
+        /// <param name="navigationContext">key=value vars</param>
         public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
             int testId = 0;
@@ -48,7 +66,7 @@ namespace TestMaker.UI.ViewModels
                     if (int.TryParse(TestIdString, out testId))
                         if (!await TryGetTest(testId))
                         {
-                            if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                            if (await _tokenHandler.TryRefreshTokenAsync())
                             {
                                 await TryGetTest(testId);
                             }
@@ -66,9 +84,17 @@ namespace TestMaker.UI.ViewModels
             }
         }
 
+        #endregion Public Methods
+
+        #region Private Methods
+
+        /// <summary>
+        /// try get test by id
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryGetTest(int testId)
         {
-            var request = JsonConvert.SerializeObject(new GetTestRequest(testId));
+            var request = JsonConvert.SerializeObject(testId);
             var response = await StaticProperties.Client.PostAsync("/test/getTest", new StringContent(request, Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
@@ -89,6 +115,10 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
+        /// <summary>
+        /// try send test
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TrySendTest()
         {
             var request = JsonConvert.SerializeObject(Test);
@@ -102,12 +132,16 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
-        private async Task SendTestButton()
+        /// <summary>
+        /// send test button event
+        /// </summary>
+        /// <returns></returns>
+        private async Task SendTestResultButton()
         {
             Test.Date = DateTime.Now;
             if (!await TrySendTest())
             {
-                if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                if (await _tokenHandler.TryRefreshTokenAsync())
                 {
                     await TrySendTest();
                 }
@@ -118,5 +152,7 @@ namespace TestMaker.UI.ViewModels
                 }
             }
         }
+
+        #endregion Private Methods
     }
 }

@@ -17,9 +17,15 @@ namespace TestMakerApi.Controllers
     [ApiController]
     public class TestController : Controller
     {
+        #region Private Fields
+
         private IDatabaseService _databaseService;
         private ITokenHandlerService _tokenHandlerService;
         private UserAuthorizationRequest _userHeader;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public TestController(IDatabaseService databaseService, ITokenHandlerService tokenHandlerService)
         {
@@ -27,28 +33,16 @@ namespace TestMakerApi.Controllers
             _tokenHandlerService = tokenHandlerService;
         }
 
-        private bool IsTestValid(ref Test test)
-        {
-            if (test.Attempts == 0 || test.Questions.Count == 0 || string.IsNullOrWhiteSpace(test.Name))
-                return false;
-            foreach (var question in test.Questions)
-            {
-                if (string.IsNullOrWhiteSpace(question.Question) || question.Answers.Count < 2)
-                    return false;
-                int count = 0;
-                foreach (var answer in question.Answers)
-                {
-                    if (string.IsNullOrWhiteSpace(answer.Answer))
-                        return false;
-                    if (answer.IsRight)
-                        count++;
-                }
-                if (count == 0)
-                    return false;
-            }
-            return true;
-        }
+        #endregion Public Constructors
 
+        #region Public Methods
+
+        /// <summary>
+        /// Add test
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok() if added, ValidationProblem() if test is not valid, Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/addTest")]
         public async Task<ActionResult> AddTest(Test test, [FromHeader] string Authorization)
         {
@@ -75,6 +69,11 @@ namespace TestMakerApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Get test list of user
+        /// </summary>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok(Test list), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpGet("/test/getTestList")]
         public async Task<ActionResult<IList<Test>>> GetTestList([FromHeader] string Authorization)
         {
@@ -96,15 +95,21 @@ namespace TestMakerApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Get user's test by test id
+        /// </summary>
+        /// <param name="testId">Test id</param>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok(Test), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/getTest")]
-        public async Task<ActionResult<Test>> GetTest(GetTestRequest getTestRequest, [FromHeader] string Authorization)
+        public async Task<ActionResult<Test>> GetTest([FromBody] int testId, [FromHeader] string Authorization)
         {
             try
             {
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
-                var test = await _databaseService.GetTestAsync(getTestRequest.TestId);
+                var test = await _databaseService.GetTestAsync(testId);
                 return Ok(test);
             }
             catch (Newtonsoft.Json.JsonReaderException e)
@@ -117,27 +122,12 @@ namespace TestMakerApi.Controllers
             }
         }
 
-        [HttpPost("/test/getAttemptsLeft")]
-        public async Task<ActionResult<Test>> GetAttemptsLeft(GetTestRequest getTestRequest, [FromHeader] string Authorization)
-        {
-            try
-            {
-                _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
-                if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
-                    return Unauthorized("Token error");
-                var test = await _databaseService.GetTestAsync(getTestRequest.TestId);
-                return Ok(test);
-            }
-            catch (Newtonsoft.Json.JsonReaderException e)
-            {
-                return Unauthorized($"Token error: {e}");
-            }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
-            {
-                return NotFound($"Database error: {e}");
-            }
-        }
-
+        /// <summary>
+        /// Delete test
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok() if deleted, Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/deleteTest")]
         public async Task<ActionResult> DeleteTest(Test test, [FromHeader] string Authorization)
         {
@@ -160,6 +150,12 @@ namespace TestMakerApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Get a list of usernames who are allowed to take the test
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok(Usernames list), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/getTestAllowedUsers")]
         public async Task<ActionResult<IList<string>>> GetAllowedUsers(Test test, [FromHeader] string Authorization)
         {
@@ -181,6 +177,12 @@ namespace TestMakerApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Allow the user to take the test
+        /// </summary>
+        /// <param name="testAccessRequest">Username and Test</param>
+        /// <param name="Authorization"></param>
+        /// <returns>Ok(), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/addTaskAllowedUser")]
         public async Task<ActionResult<IList<string>>> AddTaskAllowedUser(AddTestAccessRequest testAccessRequest, [FromHeader] string Authorization)
         {
@@ -203,6 +205,12 @@ namespace TestMakerApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Prevent the user from taking the test
+        /// </summary>
+        /// <param name="testAccessRequest"> Username and Test</param>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok(), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/deleteTaskAllowedUser")]
         public async Task<ActionResult<IList<string>>> DeleteTaskAllowedUser(AddTestAccessRequest testAccessRequest, [FromHeader] string Authorization)
         {
@@ -225,6 +233,12 @@ namespace TestMakerApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Update test
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok(Allowed users), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/updateTest")]
         public async Task<ActionResult<IList<string>>> UpdateTest(Test test, [FromHeader] string Authorization)
         {
@@ -247,6 +261,11 @@ namespace TestMakerApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Get list of tests that user is allowed to take
+        /// </summary>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok(list of tests), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpGet("/test/getAllowedTestList")]
         public async Task<ActionResult<IList<Test>>> GetAllowedTestList([FromHeader] string Authorization)
         {
@@ -269,6 +288,11 @@ namespace TestMakerApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Get user's test result list (Where every test the user passes is the best)
+        /// </summary>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok(list of test results), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpGet("/test/getUserTestResultList")]
         public async Task<ActionResult<IList<TestResult>>> GetUserTestResultList([FromHeader] string Authorization)
         {
@@ -291,15 +315,21 @@ namespace TestMakerApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Get best result of every user, that passed the test
+        /// </summary>
+        /// <param name="testId">Test id</param>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok(list of test results), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/getTestResultList")]
-        public async Task<ActionResult<IList<TestResult>>> GetTestResultList(GetTestRequest testRequest, [FromHeader] string Authorization)
+        public async Task<ActionResult<IList<TestResult>>> GetTestResultList([FromBody] int testId, [FromHeader] string Authorization)
         {
             try
             {
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
-                var list = await _databaseService.GetBestTestResultsList(testRequest.TestId);
+                var list = await _databaseService.GetBestTestResultsList(testId);
                 return Ok(list);
             }
             catch (Newtonsoft.Json.JsonReaderException e)
@@ -313,23 +343,12 @@ namespace TestMakerApi.Controllers
             }
         }
 
-        private void CalculateTestResult(ref TestResult testResult)
-        {
-            int count;
-            foreach (var question in testResult.Questions)
-            {
-                count = 0;
-                foreach (var answer in question.Answers)
-                {
-                    if (answer.IsRight == answer.IsSelected)
-                        count++;
-                }
-                if (count == question.Answers.Count)
-                    testResult.Result++;
-            }
-            testResult.Result *= (float)100 / testResult.Questions.Count;
-        }
-
+        /// <summary>
+        /// Add test result
+        /// </summary>
+        /// <param name="testResult">Test result</param>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok() if added, Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/addTestResult")]
         public async Task<ActionResult> AddTestResult(TestResult testResult, [FromHeader] string Authorization)
         {
@@ -353,15 +372,21 @@ namespace TestMakerApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Get test result
+        /// </summary>
+        /// <param name="testId"></param>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok(Test result), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/getTestResult")]
-        public async Task<ActionResult<TestResult>> GetTestResult(GetTestRequest testRequest, [FromHeader] string Authorization)
+        public async Task<ActionResult<TestResult>> GetTestResult([FromBody] int testResultId, [FromHeader] string Authorization)
         {
             try
             {
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
-                var testResult = await _databaseService.GetTestResultAsync(testRequest.TestId);
+                var testResult = await _databaseService.GetTestResultAsync(testResultId);
                 return Ok(testResult);
             }
             catch (Newtonsoft.Json.JsonReaderException e)
@@ -375,15 +400,21 @@ namespace TestMakerApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Is user can check test's right answers of test result
+        /// </summary>
+        /// <param name="testId">Test id</param>
+        /// <param name="Authorization">Authorization class in header</param>
+        /// <returns>Ok(true) if can, else Ok(false), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/isUserCanCheckTestResult")]
-        public async Task<ActionResult<bool>> IsUserCanCheckTestResult(GetTestRequest testRequest, [FromHeader] string Authorization)
+        public async Task<ActionResult<bool>> IsUserCanCheckTestResult([FromBody] int testId, [FromHeader] string Authorization)
         {
             try
             {
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
-                var testResult = await _databaseService.IsUserCanCheckTestResult(testRequest.TestId, _userHeader.Username);
+                var testResult = await _databaseService.IsUserCanCheckTestResult(testId, _userHeader.Username);
                 return Ok(testResult);
             }
             catch (Newtonsoft.Json.JsonReaderException e)
@@ -396,5 +427,59 @@ namespace TestMakerApi.Controllers
                 return NotFound($"Database error: {e}");
             }
         }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        /// <summary>
+        /// Validate test
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <returns>true if test is valid, else returns false</returns>
+        private bool IsTestValid(ref Test test)
+        {
+            if (test.Attempts == 0 || test.Questions.Count == 0 || string.IsNullOrWhiteSpace(test.Name))
+                return false;
+            foreach (var question in test.Questions)
+            {
+                if (string.IsNullOrWhiteSpace(question.Question) || question.Answers.Count < 2)
+                    return false;
+                int count = 0;
+                foreach (var answer in question.Answers)
+                {
+                    if (string.IsNullOrWhiteSpace(answer.Answer))
+                        return false;
+                    if (answer.IsRight)
+                        count++;
+                }
+                if (count == 0)
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// calculate result of test results
+        /// </summary>
+        /// <param name="testResult">Test result class</param>
+        private void CalculateTestResult(ref TestResult testResult)
+        {
+            int count;
+            foreach (var question in testResult.Questions)
+            {
+                count = 0;
+                foreach (var answer in question.Answers)
+                {
+                    if (answer.IsRight == answer.IsSelected)
+                        count++;
+                }
+                if (count == question.Answers.Count)
+                    testResult.Result++;
+            }
+            testResult.Result *= (float)100 / testResult.Questions.Count;
+        }
+
+        #endregion Private Methods
     }
 }

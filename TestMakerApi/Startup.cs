@@ -60,6 +60,7 @@ namespace TestMakerApi
                 config.AddSecurityRequirement(requirement);
                 config.SwaggerDoc("v1", new OpenApiInfo { Title = "TestMakerApi", Version = "v1" });
             });
+            // services
             services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddSingleton<ITokenHandlerService, TokenHandlerService>();
         }

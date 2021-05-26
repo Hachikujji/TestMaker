@@ -18,9 +18,25 @@ namespace TestMaker.UI.ViewModels
 {
     public class PreviewRightTestAnswersWindowViewModel : ViewModelBase
     {
+        #region Private Fields
+
         private ITokenHandler _tokenHandler;
 
         private TestResult _test;
+
+        #endregion Private Fields
+
+        #region Public Constructors
+
+        public PreviewRightTestAnswersWindowViewModel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
+        {
+            ReturnButtonEvent = new DelegateCommand(ReturnButton);
+            _tokenHandler = tokenHandler;
+        }
+
+        #endregion Public Constructors
+
+        #region Public Properties
 
         public DelegateCommand ReturnButtonEvent { get; }
 
@@ -30,12 +46,14 @@ namespace TestMaker.UI.ViewModels
             set { SetProperty(ref _test, value); }
         }
 
-        public PreviewRightTestAnswersWindowViewModel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
-        {
-            ReturnButtonEvent = new DelegateCommand(ReturnButton);
-            _tokenHandler = tokenHandler;
-        }
+        #endregion Public Properties
 
+        #region Public Methods
+
+        /// <summary>
+        /// Navigated to UserControl event
+        /// </summary>
+        /// <param name="navigationContext">key=value vars</param>
         public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
             TestResult = null;
@@ -46,7 +64,7 @@ namespace TestMaker.UI.ViewModels
                 if (!string.IsNullOrWhiteSpace(TestResultIdString) && int.TryParse(TestResultIdString, out testId))
                     if (!await TryGetTestResult(testId))
                     {
-                        if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                        if (await _tokenHandler.TryRefreshTokenAsync())
                         {
                             await TryGetTestResult(testId);
                         }
@@ -64,9 +82,25 @@ namespace TestMaker.UI.ViewModels
             }
         }
 
+        /// <summary>
+        /// return button event
+        /// </summary>
+        public void ReturnButton()
+        {
+            RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        /// <summary>
+        /// try get test result by id
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryGetTestResult(int testResultId)
         {
-            var request = JsonConvert.SerializeObject(new GetTestRequest(testResultId));
+            var request = JsonConvert.SerializeObject(testResultId);
             var response = await StaticProperties.Client.PostAsync("/test/getTestResult", new StringContent(request, Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
@@ -87,9 +121,6 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
-        public void ReturnButton()
-        {
-            RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
-        }
+        #endregion Private Methods
     }
 }

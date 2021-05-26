@@ -13,6 +13,10 @@ namespace TestMaker.UI.Services
 {
     public class TokenHandler : ITokenHandler
     {
+        /// <summary>
+        /// Is JWT token valid request async
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         public async Task<bool> IsJwtTokenValidAsync()
         {
             HttpResponseMessage response = await StaticProperties.Client.GetAsync("user/validateToken");
@@ -22,7 +26,11 @@ namespace TestMaker.UI.Services
                 return false;
         }
 
-        public async Task<bool> TryUpdateRefreshTokenAsync()
+        /// <summary>
+        /// try update JWT token async
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
+        public async Task<bool> TryRefreshTokenAsync()
         {
             var json = JsonConvert.SerializeObject(StaticProperties.CurrentUserResponseHeader);
             HttpResponseMessage response = await StaticProperties.Client.PostAsync("user/refreshToken", new StringContent(json, Encoding.UTF8, "application/json"));

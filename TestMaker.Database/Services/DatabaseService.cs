@@ -18,6 +18,12 @@ namespace TestMaker.Database.Services
     {
         #region User
 
+        /// <summary>
+        /// Add new user async
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <returns>Task</returns>
         public async Task AddUserAsync(string username, string password)
         {
             using (var db = new DatabaseContext())
@@ -28,6 +34,11 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Add user async
+        /// </summary>
+        /// <param name="user">User</param>
+        /// <returns>Task</returns>
         public async Task AddUserAsync(User user)
         {
             using (var db = new DatabaseContext())
@@ -37,6 +48,11 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Is user exists async
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <returns>true if exists ,else returns false</returns>
         public async Task<bool> IsUserExistsAsync(string username)
         {
             using (var db = new DatabaseContext())
@@ -48,14 +64,11 @@ namespace TestMaker.Database.Services
             }
         }
 
-        public async Task<IList<User>> GetUsersAsync()
-        {
-            using (var db = new DatabaseContext())
-            {
-                return await db.Users.ToListAsync();
-            }
-        }
-
+        /// <summary>
+        /// Get user async by id
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>user</returns>
         public async Task<User> GetUserAsync(int id)
         {
             using (var db = new DatabaseContext())
@@ -64,6 +77,12 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Get user async by username and password
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <returns>user</returns>
         public async Task<User> GetUserAsync(string username, string password)
         {
             using (var db = new DatabaseContext())
@@ -72,6 +91,11 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Get user async by username
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <returns>User</returns>
         private async Task<User> GetUserAsync(string username)
         {
             using (var db = new DatabaseContext())
@@ -80,6 +104,10 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Get list if all users async
+        /// </summary>
+        /// <returns>List of users</returns>
         public async Task<IList<string>> GetUsernamesAsync()
         {
             using (var db = new DatabaseContext())
@@ -89,7 +117,13 @@ namespace TestMaker.Database.Services
             }
         }
 
-        public async Task UpdateUserAsync(User user, RefreshToken refreshToken)
+        /// <summary>
+        /// Update user's refresh token async
+        /// </summary>
+        /// <param name="user">User</param>
+        /// <param name="refreshToken">New refresh token</param>
+        /// <returns>Task</returns>
+        public async Task UpdateUserRefreshTokenAsync(User user, RefreshToken refreshToken)
         {
             using (var db = new DatabaseContext())
             {
@@ -104,6 +138,11 @@ namespace TestMaker.Database.Services
 
         #region Token
 
+        /// <summary>
+        /// Get refresh token of user by id
+        /// </summary>
+        /// <param name="userId">User id</param>
+        /// <returns> Refresh token</returns>
         public async Task<RefreshToken> GetRefreshTokenAsync(int userId)
         {
             using (var db = new DatabaseContext())
@@ -117,6 +156,11 @@ namespace TestMaker.Database.Services
 
         #region Test
 
+        /// <summary>
+        /// Add test async
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <returns>Task</returns>
         public async Task AddTestAsync(Test test)
         {
             using (var db = new DatabaseContext())
@@ -126,6 +170,11 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Get lsit of user's tests async by username
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <returns>List of tests</returns>
         public async Task<IList<Test>> GetTestListAsync(string username)
         {
             using (var db = new DatabaseContext())
@@ -135,6 +184,11 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Delete test async
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <returns>Task</returns>
         public async Task DeleteTestAsync(Test test)
         {
             using (var db = new DatabaseContext())
@@ -161,6 +215,11 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Get username list of all users that can take the test
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <returns>List of usernames</returns>
         public async Task<IList<string>> GetTestAllowedUsersAsync(Test test)
         {
             using (var db = new DatabaseContext())
@@ -170,6 +229,12 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Add new user's access to test
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <param name="username">Username</param>
+        /// <returns>Task</returns>
         public async Task AddTestAllowedUserAsync(Test test, string username)
         {
             using (var db = new DatabaseContext())
@@ -186,6 +251,12 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Delete user's access to test
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <param name="username">Username</param>
+        /// <returns>Task</returns>
         public async Task DeleteTestAllowedUserAsync(Test test, string username)
         {
             using (var db = new DatabaseContext())
@@ -202,6 +273,11 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Get test async by id
+        /// </summary>
+        /// <param name="testId">Test id</param>
+        /// <returns>Test</returns>
         public async Task<Test> GetTestAsync(int testId)
         {
             using (var db = new DatabaseContext())
@@ -219,6 +295,11 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Update test async
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <returns>Task</returns>
         public async Task UpdateTestAsync(Test test)
         {
             using (var db = new DatabaseContext())
@@ -243,6 +324,11 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Is test exists async by id
+        /// </summary>
+        /// <param name="id">Test id</param>
+        /// <returns>true if exists, else returns false</returns>
         public async Task<bool> IsTestExistsAsync(int id)
         {
             using (var db = new DatabaseContext())
@@ -255,6 +341,11 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Get all allowed user's tests that he can take
+        /// </summary>
+        /// <param name="username">username</param>
+        /// <returns>list of tests</returns>
         public async Task<IList<Test>> GetAllowedTestList(string username)
         {
             using (var db = new DatabaseContext())
@@ -278,6 +369,12 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Get amount of test attempts left async
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <param name="username">Username</param>
+        /// <returns>int amount</returns>
         private async Task<int> GetTestAttemptsLeftAsync(Test test, string username)
         {
             using (var db = new DatabaseContext())
@@ -287,19 +384,30 @@ namespace TestMaker.Database.Services
             }
         }
 
-        public async Task AddTestResultAsync(TestResult test, string username)
+        /// <summary>
+        /// Add test result async
+        /// </summary>
+        /// <param name="testResult">Test result</param>
+        /// <param name="username">Username</param>
+        /// <returns>Task</returns>
+        public async Task AddTestResultAsync(TestResult testResult, string username)
         {
             using (var db = new DatabaseContext())
             {
                 User user = await GetUserAsync(username);
-                test.User = user;
-                db.Attach(test.Test);
+                testResult.User = user;
+                db.Attach(testResult.Test);
                 db.Attach(user);
-                db.TestResult.Add(test);
+                db.TestResult.Add(testResult);
                 await db.SaveChangesAsync();
             }
         }
 
+        /// <summary>
+        /// Get user best test results list
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <returns>List of test results</returns>
         public async Task<IList<TestResult>> GetUserBestTestResultsList(string username)
         {
             using (var db = new DatabaseContext())
@@ -311,6 +419,11 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Get best test results of test by test id
+        /// </summary>
+        /// <param name="testId">test id</param>
+        /// <returns>list of test results</returns>
         public async Task<IList<TestResult>> GetBestTestResultsList(int testId)
         {
             using (var db = new DatabaseContext())
@@ -322,6 +435,11 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Get test result by test result id
+        /// </summary>
+        /// <param name="testResultId">Test result id</param>
+        /// <returns>Test result</returns>
         public async Task<TestResult> GetTestResultAsync(int testResultId)
         {
             using (var db = new DatabaseContext())
@@ -331,6 +449,12 @@ namespace TestMaker.Database.Services
             }
         }
 
+        /// <summary>
+        /// Is user can check right answers of test results by test id
+        /// </summary>
+        /// <param name="testId">Test id</param>
+        /// <param name="username">username</param>
+        /// <returns>true if user can check, else returns false</returns>
         public async Task<bool> IsUserCanCheckTestResult(int testId, string username)
         {
             using (var db = new DatabaseContext())

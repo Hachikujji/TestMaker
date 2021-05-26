@@ -16,18 +16,14 @@ namespace TestMaker.UI.ViewModels
 {
     public class AllowedTestsWindowViewModel : ViewModelBase
     {
-        public DelegateCommand ReturnButtonEvent { get; }
-        public DelegateCommand<object> StartTestButtonEvent { get; }
+        #region Private Fields
 
         private ObservableCollection<Test> _allowedTestList;
-
-        public ObservableCollection<Test> AllowedTestList
-        {
-            get { return _allowedTestList; }
-            set { SetProperty(ref _allowedTestList, value); }
-        }
-
         private ITokenHandler _tokenHandler;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public AllowedTestsWindowViewModel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
         {
@@ -36,11 +32,32 @@ namespace TestMaker.UI.ViewModels
             _tokenHandler = tokenHandler;
         }
 
+        #endregion Public Constructors
+
+        #region Public Properties
+
+        public DelegateCommand ReturnButtonEvent { get; }
+        public DelegateCommand<object> StartTestButtonEvent { get; }
+
+        public ObservableCollection<Test> AllowedTestList
+        {
+            get { return _allowedTestList; }
+            set { SetProperty(ref _allowedTestList, value); }
+        }
+
+        #endregion Public Properties
+
+        #region Public Methods
+
+        /// <summary>
+        /// Navigated to UserControl event
+        /// </summary>
+        /// <param name="navigationContext">key=value vars</param>
         public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
             if (!(await TryGetAllowedTestList()))
             {
-                if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                if (await _tokenHandler.TryRefreshTokenAsync())
                     await TryGetAllowedTestList();
                 else
                 {
@@ -50,11 +67,18 @@ namespace TestMaker.UI.ViewModels
             }
         }
 
+        /// <summary>
+        /// return button event
+        /// </summary>
         public void ReturnButton()
         {
             RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
         }
 
+        /// <summary>
+        /// start test button event
+        /// </summary>
+        /// <param name="testUI">Test</param>
         public void StartTestButton(object testUI)
         {
             var test = (testUI as Test);
@@ -71,6 +95,14 @@ namespace TestMaker.UI.ViewModels
             }
         }
 
+        #endregion Public Methods
+
+        #region Private Methods
+
+        /// <summary>
+        /// try get allowed test list
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryGetAllowedTestList()
         {
             var response = await StaticProperties.Client.GetAsync("/test/getAllowedTestList/").ConfigureAwait(false);
@@ -82,5 +114,7 @@ namespace TestMaker.UI.ViewModels
             else
                 return false;
         }
+
+        #endregion Private Methods
     }
 }

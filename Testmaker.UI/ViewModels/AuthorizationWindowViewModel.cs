@@ -21,18 +21,34 @@ namespace TestMaker.UI.ViewModels
 {
     public class AuthorizationWindowViewModel : ViewModelBase
     {
+        #region Private Fields
+
+        private string _authorizationError;
+
+        // Visibility of authorization error message
+        private Visibility _authorizationErrorLogVisibility;
+
+        private UserAuthorizationRequest _userAuthorizationRequest;
+
+        private string _username;
+        private Timer _errorTimer = new Timer();
+
+        #endregion Private Fields
+
         #region Public Constructors
 
         public AuthorizationWindowViewModel(IRegionManager regionManager) : base(regionManager)
         {
+            // timer setup
             _errorTimer.AutoReset = false;
             _errorTimer.Interval = 2000;
             _errorTimer.Elapsed += ErrorTimerElapsedEvent;
+
             LoginButtonEvent = new DelegateCommand<object>(LoginButton);
             RegistrationButtonEvent = new DelegateCommand<object>(RegistrationButton);
-            GetUsersEvent = new DelegateCommand(GetUsers);
             AuthorizationErrorLogVisibility = Visibility.Collapsed;
 
+            // HttpClient setup
             StaticProperties.Client = new HttpClient();
             StaticProperties.Client.DefaultRequestHeaders.Accept.Clear();
             StaticProperties.Client.DefaultRequestHeaders.Accept.Add(
@@ -66,12 +82,14 @@ namespace TestMaker.UI.ViewModels
 
         public DelegateCommand<object> RegistrationButtonEvent { get; }
 
-        public DelegateCommand GetUsersEvent { get; }
-
         #endregion Public Properties
 
         #region Public Methods
 
+        /// <summary>
+        /// Login button event
+        /// </summary>
+        /// <param name="PasswordBox">PasswordBox UI object</param>
         public async void LoginButton(object PasswordBox)
         {
             string password = (PasswordBox as PasswordBox)?.Password;
@@ -107,6 +125,10 @@ namespace TestMaker.UI.ViewModels
             (PasswordBox as PasswordBox).Password = string.Empty;
         }
 
+        /// <summary>
+        /// Registration button event
+        /// </summary>
+        /// <param name="PasswordBox">PasswordBox UI object</param>
         public async void RegistrationButton(object PasswordBox)
         {
             string password = (PasswordBox as PasswordBox)?.Password;
@@ -121,15 +143,20 @@ namespace TestMaker.UI.ViewModels
             try
             {
                 HttpResponseMessage isUserExistsResponse = await StaticProperties.Client.GetAsync($"/user/isUserExists/{Username}");
-                if (!isUserExistsResponse.IsSuccessStatusCode)
+                if (isUserExistsResponse.IsSuccessStatusCode)
                 {
-                    HttpResponseMessage addUserResponse = await StaticProperties.Client.PostAsync("user/addUser", new StringContent(json, Encoding.UTF8, "application/json"));
-                    LoginButton(PasswordBox);
-                }
-                else
-                {
-                    AuthorizationError = "User already exists";
-                    _errorTimer.Start();
+                    var isUserExistsString = await isUserExistsResponse.Content.ReadAsStringAsync();
+                    var isUserExists = JsonConvert.DeserializeObject<bool>(isUserExistsString);
+                    if (!isUserExists)
+                    {
+                        HttpResponseMessage addUserResponse = await StaticProperties.Client.PostAsync("user/addUser", new StringContent(json, Encoding.UTF8, "application/json"));
+                        LoginButton(PasswordBox);
+                    }
+                    else
+                    {
+                        AuthorizationError = "User already exists";
+                        _errorTimer.Start();
+                    }
                 }
             }
             catch (System.Net.Http.HttpRequestException e)
@@ -140,19 +167,9 @@ namespace TestMaker.UI.ViewModels
             (PasswordBox as PasswordBox).Password = string.Empty;
         }
 
-        public void GetUsers()
-        {
-            //HttpResponseMessage response = await Client.GetAsync("getUsers");
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    var list = await response.Content.ReadAsStringAsync();
-            //    Password = list;
-            //}
-            //else
-            //    Password = response.StatusCode.ToString();
-            RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
-        }
-
+        /// <summary>
+        /// When error message should hide | timer elapsed event
+        /// </summary>
         private void ErrorTimerElapsedEvent(object sender, ElapsedEventArgs e)
         {
             AuthorizationError = String.Empty;
@@ -160,19 +177,5 @@ namespace TestMaker.UI.ViewModels
         }
 
         #endregion Public Methods
-
-        #region Private Fields
-
-        private string _authorizationError;
-
-        // Visibility of authorization error message
-        private Visibility _authorizationErrorLogVisibility;
-
-        private UserAuthorizationRequest _userAuthorizationRequest;
-
-        private string _username;
-        private Timer _errorTimer = new Timer();
-
-        #endregion Private Fields
     }
 }

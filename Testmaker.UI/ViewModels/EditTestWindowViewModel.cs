@@ -107,35 +107,58 @@ namespace TestMaker.UI.ViewModels
 
         #region Public Methods
 
+        /// <summary>
+        /// Add question button event
+        /// </summary>
         public void AddQuestionButton()
         {
             Test.Questions.Add(new TestQuestion($"New question", new ObservableCollection<TestAnswer>()));
         }
 
+        /// <summary>
+        /// Add answer button event
+        /// </summary>
+        /// <param name="testQuestion">Test question</param>
         public void AddAnswerButton(object testQuestion)
         {
             var question = (testQuestion as TestQuestion);
             question.Answers.Add(new TestAnswer("New answer", false));
         }
 
+        /// <summary>
+        /// Remove question button event
+        /// </summary>
+        /// <param name="testQuestion">Test Question</param>
         public void RemoveQuestionButton(object testQuestion)
         {
             var question = (testQuestion as TestQuestion);
             Test.Questions.Remove(question);
         }
 
+        /// <summary>
+        /// Remove test answer button event, executed after RemoveAnswerEnterButton()
+        /// </summary>
+        /// <param name="testAnswer">Test answer</param>
         public void RemoveAnswerButton(object testAnswer)
         {
             var Answer = (testAnswer as TestAnswer);
             TestQuestion.Answers.Remove(Answer);
         }
 
+        /// <summary>
+        /// Remove answer button event, receiving TestQuestion first
+        /// </summary>
+        /// <param name="testQuestion"></param>
         public void RemoveAnswerEnterButton(object testQuestion)
         {
             var Question = (testQuestion as TestQuestion);
             TestQuestion = Question;
         }
 
+        /// <summary>
+        /// Create test button event, validate test
+        /// </summary>
+        /// <returns>Task</returns>
         public async Task CreateTestButton()
         {
             if (Test.Attempts == 0)
@@ -189,7 +212,7 @@ namespace TestMaker.UI.ViewModels
                 }
                 else
                 {
-                    if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                    if (await _tokenHandler.TryRefreshTokenAsync())
                     {
                         await TrySendTest();
                     }
@@ -207,7 +230,7 @@ namespace TestMaker.UI.ViewModels
                 }
                 else
                 {
-                    if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                    if (await _tokenHandler.TryRefreshTokenAsync())
                     {
                         await TryUpdateTest();
                     }
@@ -220,6 +243,10 @@ namespace TestMaker.UI.ViewModels
             }
         }
 
+        /// <summary>
+        /// navigated to UserControl event, if navigation context!=null => not new test => edit test that already exists
+        /// </summary>
+        /// <param name="navigationContext">key=value vars</param>
         public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
             int editTestId = 0;
@@ -232,7 +259,7 @@ namespace TestMaker.UI.ViewModels
                 if (editTestId > 0)
                     if (!await TryGetTest(editTestId))
                     {
-                        if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                        if (await _tokenHandler.TryRefreshTokenAsync())
                         {
                             await TryGetTest(editTestId);
                         }
@@ -255,11 +282,18 @@ namespace TestMaker.UI.ViewModels
 
         #region Private Methods
 
+        /// <summary>
+        /// return button event
+        /// </summary>
         public void ReturnButton()
         {
             RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
         }
 
+        /// <summary>
+        /// try send test
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TrySendTest()
         {
             var json = JsonConvert.SerializeObject(Test);
@@ -273,6 +307,10 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
+        /// <summary>
+        /// try update test
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryUpdateTest()
         {
             var json = JsonConvert.SerializeObject(Test);
@@ -286,9 +324,13 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
+        /// <summary>
+        /// try get test by id
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryGetTest(int testId)
         {
-            var request = JsonConvert.SerializeObject(new GetTestRequest(testId));
+            var request = JsonConvert.SerializeObject(testId);
             var response = await StaticProperties.Client.PostAsync("/test/getTest", new StringContent(request, Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
@@ -296,7 +338,7 @@ namespace TestMaker.UI.ViewModels
                 {
                     var testJson = await response.Content.ReadAsStringAsync();
                     var test = JsonConvert.DeserializeObject<Test>(testJson);
-                    Test = new Test(test);
+                    Test = test;
                     IsTestEditing = false;
                     CreateTestButtonName = "Update test";
                 }

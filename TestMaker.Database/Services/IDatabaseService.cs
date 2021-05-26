@@ -14,15 +14,13 @@ namespace TestMaker.Database.Services
 
         public Task AddUserAsync(User user);
 
-        public Task<IList<User>> GetUsersAsync();
-
         public Task<User> GetUserAsync(int id);
 
         public Task<User> GetUserAsync(string username, string password);
 
         public Task<bool> IsUserExistsAsync(string username);
 
-        public Task UpdateUserAsync(User user, RefreshToken oldRefreshToken);
+        public Task UpdateUserRefreshTokenAsync(User user, RefreshToken oldRefreshToken);
 
         public Task<RefreshToken> GetRefreshTokenAsync(int userId);
 

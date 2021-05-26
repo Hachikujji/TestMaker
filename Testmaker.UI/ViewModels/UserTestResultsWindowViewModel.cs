@@ -19,18 +19,14 @@ namespace TestMaker.UI.ViewModels
 {
     public class UserTestResultsWindowViewModel : ViewModelBase
     {
-        public DelegateCommand ReturnButtonEvent { get; }
-        public DelegateCommand<object> ShowTestResultsButtonEvent { get; }
+        #region Private Fields
 
         private ObservableCollection<TestResult> _testResultList;
-
-        public ObservableCollection<TestResult> TestResultList
-        {
-            get { return _testResultList; }
-            set { SetProperty(ref _testResultList, value); }
-        }
-
         private ITokenHandler _tokenHandler;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public UserTestResultsWindowViewModel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
         {
@@ -39,11 +35,32 @@ namespace TestMaker.UI.ViewModels
             _tokenHandler = tokenHandler;
         }
 
+        #endregion Public Constructors
+
+        #region Public Properties
+
+        public DelegateCommand ReturnButtonEvent { get; }
+        public DelegateCommand<object> ShowTestResultsButtonEvent { get; }
+
+        public ObservableCollection<TestResult> TestResultList
+        {
+            get { return _testResultList; }
+            set { SetProperty(ref _testResultList, value); }
+        }
+
+        #endregion Public Properties
+
+        #region Public Methods
+
+        /// <summary>
+        /// Navigated to UserControl event
+        /// </summary>
+        /// <param name="navigationContext">key=value vars</param>
         public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
             if (!(await TryGetTestResultsList()))
             {
-                if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                if (await _tokenHandler.TryRefreshTokenAsync())
                     await TryGetTestResultsList();
                 else
                 {
@@ -53,17 +70,26 @@ namespace TestMaker.UI.ViewModels
             }
         }
 
+        /// <summary>
+        /// Return button event
+        /// </summary>
         public void ReturnButton()
         {
             RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
         }
 
+        /// <summary>
+        /// <para>Show test results button event</para>
+        /// if user has spelt all attemps he can see correct answers on test
+        /// </summary>
+        /// <param name="testResultUI"></param>
+        /// <returns></returns>
         public async Task ShowTestResultsButtonAsync(object testResultUI)
         {
             var testResult = (testResultUI as TestResult);
             if (testResult != null && !(await TryGetIsUserCanCheckTestResult(testResult)))
             {
-                if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                if (await _tokenHandler.TryRefreshTokenAsync())
                     await TryGetIsUserCanCheckTestResult(testResult);
                 else
                 {
@@ -73,6 +99,14 @@ namespace TestMaker.UI.ViewModels
             }
         }
 
+        #endregion Public Methods
+
+        #region Private Methods
+
+        /// <summary>
+        /// try get test results list
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryGetTestResultsList()
         {
             var response = await StaticProperties.Client.GetAsync("/test/getUserTestResultList").ConfigureAwait(false);
@@ -85,9 +119,13 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
+        /// <summary>
+        /// try get is user can check test answers
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryGetIsUserCanCheckTestResult(TestResult testResult)
         {
-            var request = JsonConvert.SerializeObject(new GetTestRequest(testResult.Test.Id));
+            var request = JsonConvert.SerializeObject(testResult.Test.Id);
             var response = await StaticProperties.Client.PostAsync("/test/isUserCanCheckTestResult", new StringContent(request, Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
@@ -106,5 +144,7 @@ namespace TestMaker.UI.ViewModels
             else
                 return false;
         }
+
+        #endregion Private Methods
     }
 }

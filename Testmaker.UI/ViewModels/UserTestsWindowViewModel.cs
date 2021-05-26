@@ -19,6 +19,18 @@ namespace TestMaker.UI.ViewModels
 {
     public class UserTestsWindowViewModel : ViewModelBase
     {
+        #region Private Fields
+
+        private ObservableCollection<Test> _testList;
+        private ObservableCollection<Test> _testListFiltered;
+        private ITokenHandler _tokenHandler;
+        private Test _currentTest;
+        private string _testFilter;
+        private string _allowedUsersFilter;
+        private string _allUsersFilter;
+
+        #endregion Private Fields
+
         #region Public Constructors
 
         public UserTestsWindowViewModel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
@@ -118,6 +130,11 @@ namespace TestMaker.UI.ViewModels
 
         #region Public Methods
 
+        /// <summary>
+        /// delete test button event
+        /// </summary>
+        /// <param name="testUI">test</param>
+        /// <returns>task</returns>
         public async Task DeleteTestButton(object testUI)
         {
             if (testUI != null)
@@ -125,7 +142,7 @@ namespace TestMaker.UI.ViewModels
                 var test = (testUI as Test);
                 if (!(await TryDeleteTest(test)))
                 {
-                    if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                    if (await _tokenHandler.TryRefreshTokenAsync())
                     {
                         await TryDeleteTest(test);
                     }
@@ -137,11 +154,15 @@ namespace TestMaker.UI.ViewModels
             }
         }
 
+        /// <summary>
+        /// Update allowed users button event
+        /// </summary>
+        /// <returns>Task</returns>
         public async Task UpdateAllowedUsersButton()
         {
             if (!(await TryGetAllowedUsers()))
             {
-                if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                if (await _tokenHandler.TryRefreshTokenAsync())
                 {
                     await TryGetAllowedUsers();
                 }
@@ -153,6 +174,11 @@ namespace TestMaker.UI.ViewModels
             }
         }
 
+        /// <summary>
+        /// Add allowed user button event
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <returns>Task</returns>
         public async Task AddAllowedUsersButton(object username)
         {
             if (SelectedTest != null)
@@ -161,7 +187,7 @@ namespace TestMaker.UI.ViewModels
                     return;
                 if (!(await TryAddAllowedUser((username as string), SelectedTest)))
                 {
-                    if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                    if (await _tokenHandler.TryRefreshTokenAsync())
                     {
                         await TryAddAllowedUser((username as string), SelectedTest);
                     }
@@ -176,13 +202,18 @@ namespace TestMaker.UI.ViewModels
                 MessageBox.Show("Choose test");
         }
 
+        /// <summary>
+        /// Delete allowed user button event
+        /// </summary>
+        /// <param name="username">username</param>
+        /// <returns>Task</returns>
         public async Task DeleteAllowedUsersButton(object username)
         {
             if (SelectedTest != null)
             {
                 if (!(await TryDeleteAllowedUser((username as string), SelectedTest)))
                 {
-                    if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                    if (await _tokenHandler.TryRefreshTokenAsync())
                     {
                         await TryDeleteAllowedUser((username as string), SelectedTest);
                     }
@@ -197,11 +228,18 @@ namespace TestMaker.UI.ViewModels
                 MessageBox.Show("Choose test");
         }
 
+        /// <summary>
+        /// return button event
+        /// </summary>
         public void ReturnButton()
         {
             RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
         }
 
+        /// <summary>
+        /// Edit test button event
+        /// </summary>
+        /// <param name="testUI">Test</param>
         public void EditTestButton(object testUI)
         {
             var test = (testUI as Test);
@@ -214,6 +252,10 @@ namespace TestMaker.UI.ViewModels
             RegionManager.RequestNavigate(StaticProperties.ContentRegion, "EditTestWindow", navigationParameters);
         }
 
+        /// <summary>
+        /// Show users results button event
+        /// </summary>
+        /// <param name="testUI">Test</param>
         public void ShowUsersResultsButton(object testUI)
         {
             var test = (testUI as Test);
@@ -226,6 +268,10 @@ namespace TestMaker.UI.ViewModels
             RegionManager.RequestNavigate(StaticProperties.ContentRegion, "TestResultsWindow", navigationParameters);
         }
 
+        /// <summary>
+        /// On navigated to UserControl event
+        /// </summary>
+        /// <param name="navigationContext">key=value args</param>
         public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
             AllUsersFilter = "";
@@ -234,7 +280,7 @@ namespace TestMaker.UI.ViewModels
             AllowedUsersFiltered = null;
             if (!(await TryGetTestList()) || !(await TryGetUsernames()))
             {
-                if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                if (await _tokenHandler.TryRefreshTokenAsync())
                 {
                     await TryGetTestList();
                     await TryGetUsernames();
@@ -249,20 +295,12 @@ namespace TestMaker.UI.ViewModels
 
         #endregion Public Methods
 
-        #region Private Fields
-
-        private ObservableCollection<Test> _testList;
-        private ObservableCollection<Test> _testListFiltered;
-        private ITokenHandler _tokenHandler;
-        private Test _currentTest;
-        private string _testFilter;
-        private string _allowedUsersFilter;
-        private string _allUsersFilter;
-
-        #endregion Private Fields
-
         #region Private Methods
 
+        /// <summary>
+        /// try get test list
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryGetTestList()
         {
             var response = await StaticProperties.Client.GetAsync("/test/getTestList/").ConfigureAwait(false);
@@ -275,6 +313,10 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
+        /// <summary>
+        /// try add allowed user
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryAddAllowedUser(string username, Test test)
         {
             var request = JsonConvert.SerializeObject(new AddTestAccessRequest(username, test));
@@ -289,6 +331,10 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
+        /// <summary>
+        /// try delete allowed user
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryDeleteAllowedUser(string username, Test test)
         {
             var request = JsonConvert.SerializeObject(new AddTestAccessRequest(username, test));
@@ -303,6 +349,10 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
+        /// <summary>
+        /// try get all usernames
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryGetUsernames()
         {
             var response = await StaticProperties.Client.GetAsync("/user/getUsernames/").ConfigureAwait(false);
@@ -315,6 +365,10 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
+        /// <summary>
+        /// try get test allowed usernames
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryGetAllowedUsers()
         {
             var request = JsonConvert.SerializeObject(SelectedTest);
@@ -329,6 +383,10 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
+        /// <summary>
+        /// try delete test
+        /// </summary>
+        /// <returns>true if request is success,else returns false</returns>
         private async Task<bool> TryDeleteTest(Test test)
         {
             var request = JsonConvert.SerializeObject(test);
@@ -342,6 +400,9 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
+        /// <summary>
+        /// Update filters for test list
+        /// </summary>
         private void UpdateFilteredTestList(string filter)
         {
             if (string.IsNullOrWhiteSpace(filter))
@@ -350,6 +411,9 @@ namespace TestMaker.UI.ViewModels
                 TestListFiltered = new ObservableCollection<Test>(TestList.Where(item => item.Name.Contains(filter)).ToList());
         }
 
+        /// <summary>
+        /// Update filters for all usernames list
+        /// </summary>
         private void UpdateFilteredAllUserList(string filter)
         {
             if (string.IsNullOrWhiteSpace(filter))
@@ -358,6 +422,9 @@ namespace TestMaker.UI.ViewModels
                 AllUsersFiltered = new ObservableCollection<string>(AllUsers.Where(item => item.Contains(filter)).ToList());
         }
 
+        /// <summary>
+        /// Update filters for allowed user's usernames list
+        /// </summary>
         private void UpdateFilteredAllowedUserList(string filter)
         {
             if (string.IsNullOrWhiteSpace(filter))

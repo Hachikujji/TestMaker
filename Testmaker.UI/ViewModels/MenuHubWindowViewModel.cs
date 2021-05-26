@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using TestMaker.Database.Models;
 using TestMaker.Stuff;
 
@@ -17,11 +18,7 @@ namespace TestMaker.UI.ViewModels
 {
     public class MenuHubWindowViewModel : ViewModelBase
     {
-        public DelegateCommand ReturnButtonEvent { get; }
-        public DelegateCommand AddButtonEvent { get; }
-        public DelegateCommand TestListButtonEvent { get; }
-        public DelegateCommand AllowedTestListButtonEvent { get; }
-        public DelegateCommand UserResultsButtonEvent { get; }
+        #region Public Constructors
 
         public MenuHubWindowViewModel(IRegionManager regionManager) : base(regionManager)
         {
@@ -32,31 +29,72 @@ namespace TestMaker.UI.ViewModels
             UserResultsButtonEvent = new DelegateCommand(async () => await UserResultsButton());
         }
 
+        #endregion Public Constructors
+
+        #region Public Properties
+
+        public DelegateCommand ReturnButtonEvent { get; }
+        public DelegateCommand AddButtonEvent { get; }
+        public DelegateCommand TestListButtonEvent { get; }
+        public DelegateCommand AllowedTestListButtonEvent { get; }
+        public DelegateCommand UserResultsButtonEvent { get; }
+
+        #endregion Public Properties
+
+        #region Public Methods
+
+        /// <summary>
+        /// return button event
+        /// </summary>
         public void ReturnButton()
         {
             RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
         }
 
+        /// <summary>
+        /// new test button event
+        /// </summary>
+        /// <returns>Task</returns>
         public async Task AddButton()
         {
             await ValidateTokenAndNavigateTo("EditTestWindow");
         }
 
+        /// <summary>
+        /// test list button event
+        /// </summary>
+        /// <returns>Task</returns>
         public async Task TestListButton()
         {
             await ValidateTokenAndNavigateTo("UserTestsWindow");
         }
 
+        /// <summary>
+        /// Allowed test list button event
+        /// </summary>
+        /// <returns>Task</returns>
         public async Task AllowedTestListButton()
         {
             await ValidateTokenAndNavigateTo("AllowedTestsWindow");
         }
 
+        /// <summary>
+        /// User results button event
+        /// </summary>
+        /// <returns>Task</returns>
         public async Task UserResultsButton()
         {
             await ValidateTokenAndNavigateTo("UserTestResultsWindow");
         }
 
+        #endregion Public Methods
+
+        #region Private Methods
+
+        /// <summary>
+        /// validate token, if token is valid - navigate to UserControl, else try to refresh token, if refresh token is expired return to authorization window.
+        /// </summary>
+        /// <returns>Task</returns>
         private async Task ValidateTokenAndNavigateTo(string path)
         {
             HttpResponseMessage response = await StaticProperties.Client.GetAsync("user/validateToken");
@@ -69,9 +107,9 @@ namespace TestMaker.UI.ViewModels
                 {
                     json = JsonConvert.SerializeObject(StaticProperties.CurrentUserResponseHeader);
                 }
-                catch (Exception e)
+                catch (Newtonsoft.Json.JsonReaderException e)
                 {
-                    Debug.WriteLine(e);
+                    MessageBox.Show($"Error when tried to convert user responce header: {e}");
                     return;
                 }
 
@@ -88,5 +126,7 @@ namespace TestMaker.UI.ViewModels
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
             }
         }
+
+        #endregion Private Methods
     }
 }
