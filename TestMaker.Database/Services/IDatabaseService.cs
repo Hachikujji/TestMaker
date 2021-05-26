@@ -53,5 +53,9 @@ namespace TestMaker.Database.Services
         public Task<IList<TestResult>> GetUserBestTestResultsList(string username);
 
         public Task<IList<TestResult>> GetBestTestResultsList(int testId);
+
+        public Task<TestResult> GetTestResultAsync(int testResultId);
+
+        public Task<bool> IsUserCanCheckTestResult(int testId, string username);
     }
 }

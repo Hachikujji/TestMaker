@@ -181,17 +181,21 @@
                                 Background="Transparent"
                                 Kind="CheckboxMultipleMarkedOutline" />
                         </Grid>
-                        <Grid Grid.Column="4">
+                        <Grid
+                            Grid.Column="4"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                                     <i:InvokeCommandAction Command="{Binding DataContext.UpdateAllowedUsersButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                             <Label
+                                MinWidth="140"
                                 Padding="10"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                HorizontalContentAlignment="Center"
+                                HorizontalContentAlignment="Left"
                                 VerticalContentAlignment="Center"
                                 Content="{Binding Name}" />
                         </Grid>

@@ -45,20 +45,19 @@ namespace TestMaker.UI.ViewModels
             {
                 string TestIdString = navigationContext.Parameters["TestId"].ToString();
                 if (!string.IsNullOrWhiteSpace(TestIdString))
-                    int.TryParse(TestIdString, out testId);
-
-                if (!await TryGetTest(testId))
-                {
-                    if (await _tokenHandler.TryUpdateRefreshTokenAsync())
-                    {
-                        await TryGetTest(testId);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Your token is expired.");
-                        RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
-                    }
-                }
+                    if (int.TryParse(TestIdString, out testId))
+                        if (!await TryGetTest(testId))
+                        {
+                            if (await _tokenHandler.TryUpdateRefreshTokenAsync())
+                            {
+                                await TryGetTest(testId);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Your token is expired.");
+                                RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
+                            }
+                        }
             }
             else
             {
@@ -93,7 +92,7 @@ namespace TestMaker.UI.ViewModels
         private async Task<bool> TrySendTest()
         {
             var request = JsonConvert.SerializeObject(Test);
-            var response = await StaticProperties.Client.PostAsync("/test/sendTestResult", new StringContent(request, Encoding.UTF8, "application/json"));
+            var response = await StaticProperties.Client.PostAsync("/test/addTestResult", new StringContent(request, Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
                 RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");

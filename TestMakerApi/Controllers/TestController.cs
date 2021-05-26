@@ -27,6 +27,28 @@ namespace TestMakerApi.Controllers
             _tokenHandlerService = tokenHandlerService;
         }
 
+        private bool IsTestValid(ref Test test)
+        {
+            if (test.Attempts == 0 || test.Questions.Count == 0 || string.IsNullOrWhiteSpace(test.Name))
+                return false;
+            foreach (var question in test.Questions)
+            {
+                if (string.IsNullOrWhiteSpace(question.Question) || question.Answers.Count < 2)
+                    return false;
+                int count = 0;
+                foreach (var answer in question.Answers)
+                {
+                    if (string.IsNullOrWhiteSpace(answer.Answer))
+                        return false;
+                    if (answer.IsRight)
+                        count++;
+                }
+                if (count == 0)
+                    return false;
+            }
+            return true;
+        }
+
         [HttpPost("/test/addTest")]
         public async Task<ActionResult> AddTest(Test test, [FromHeader] string Authorization)
         {
@@ -35,40 +57,17 @@ namespace TestMakerApi.Controllers
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                if (IsTestValid(ref test))
+                {
+                    await _databaseService.AddTestAsync(test);
+                    return Ok();
+                }
+                else
+                    return ValidationProblem("Test is not valid");
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
-            }
-
-            if (test.Attempts == 0)
-                return ValidationProblem("Attempt error");
-            if (string.IsNullOrWhiteSpace(test.Name))
-                return ValidationProblem("Test name error");
-            if (test.Questions.Count == 0)
-                return ValidationProblem("Question count error");
-            foreach (var question in test.Questions)
-            {
-                if (string.IsNullOrWhiteSpace(question.Question))
-                    return ValidationProblem("Question name error");
-                if (question.Answers.Count < 2)
-                    return ValidationProblem("Answer count error");
-                int count = 0;
-                foreach (var answer in question.Answers)
-                {
-                    if (string.IsNullOrWhiteSpace(answer.Answer))
-                        return ValidationProblem("Answer name error");
-                    if (answer.IsRight)
-                        count++;
-                }
-                if (count == 0)
-                    return ValidationProblem("Answer error");
-            }
-
-            try
-            {
-                await _databaseService.AddTestAsync(test);
-                return Ok();
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -84,17 +83,12 @@ namespace TestMakerApi.Controllers
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                var list = await _databaseService.GetTestListAsync(_userHeader.Username);
+                return Ok(list);
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
-            }
-
-            IList<Test> list;
-            try
-            {
-                list = await _databaseService.GetTestListAsync(_userHeader.Username);
-                return Ok(list);
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -110,15 +104,12 @@ namespace TestMakerApi.Controllers
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                var test = await _databaseService.GetTestAsync(getTestRequest.TestId);
+                return Ok(test);
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
-            }
-            try
-            {
-                var test = await _databaseService.GetTestAsync(getTestRequest.TestId);
-                return Ok(test);
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -134,15 +125,12 @@ namespace TestMakerApi.Controllers
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                var test = await _databaseService.GetTestAsync(getTestRequest.TestId);
+                return Ok(test);
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
-            }
-            try
-            {
-                var test = await _databaseService.GetTestAsync(getTestRequest.TestId);
-                return Ok(test);
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -158,16 +146,12 @@ namespace TestMakerApi.Controllers
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                await _databaseService.DeleteTestAsync(test);
+                return Ok("Deleted");
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
-            }
-
-            try
-            {
-                await _databaseService.DeleteTestAsync(test);
-                return Ok("Deleted");
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -184,16 +168,12 @@ namespace TestMakerApi.Controllers
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                var users = await _databaseService.GetTestAllowedUsersAsync(test);
+                return Ok(users);
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
-            }
-
-            try
-            {
-                IList<string> users = await _databaseService.GetTestAllowedUsersAsync(test);
-                return Ok(users);
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -209,16 +189,12 @@ namespace TestMakerApi.Controllers
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                await _databaseService.AddTestAllowedUserAsync(testAccessRequest.Test, testAccessRequest.Username);
+                return Ok("Added");
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
-            }
-
-            try
-            {
-                await _databaseService.AddTestAllowedUserAsync(testAccessRequest.Test, testAccessRequest.Username);
-                return Ok("Added");
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -235,16 +211,12 @@ namespace TestMakerApi.Controllers
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                await _databaseService.DeleteTestAllowedUserAsync(testAccessRequest.Test, testAccessRequest.Username);
+                return Ok("Deleted");
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
-            }
-
-            try
-            {
-                await _databaseService.DeleteTestAllowedUserAsync(testAccessRequest.Test, testAccessRequest.Username);
-                return Ok("Deleted");
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -261,16 +233,12 @@ namespace TestMakerApi.Controllers
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                await _databaseService.UpdateTestAsync(test);
+                return Ok("Updated");
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
-            }
-
-            try
-            {
-                await _databaseService.UpdateTestAsync(test);
-                return Ok("Updated");
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -287,16 +255,12 @@ namespace TestMakerApi.Controllers
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                var testList = await _databaseService.GetAllowedTestList(_userHeader.Username);
+                return Ok(testList);
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
-            }
-
-            try
-            {
-                var testList = await _databaseService.GetAllowedTestList(_userHeader.Username);
-                return Ok(testList);
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -313,16 +277,12 @@ namespace TestMakerApi.Controllers
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                var list = await _databaseService.GetUserBestTestResultsList(_userHeader.Username);
+                return Ok(list);
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
-            }
-
-            try
-            {
-                var list = await _databaseService.GetUserBestTestResultsList(_userHeader.Username);
-                return Ok(list);
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -339,16 +299,12 @@ namespace TestMakerApi.Controllers
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                var list = await _databaseService.GetBestTestResultsList(testRequest.TestId);
+                return Ok(list);
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
-            }
-
-            try
-            {
-                var list = await _databaseService.GetBestTestResultsList(testRequest.TestId);
-                return Ok(list);
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -357,37 +313,82 @@ namespace TestMakerApi.Controllers
             }
         }
 
-        [HttpPost("/test/sendTestResult")]
-        public async Task<ActionResult> SendTestResult(TestResult testResult, [FromHeader] string Authorization)
+        private void CalculateTestResult(ref TestResult testResult)
+        {
+            int count;
+            foreach (var question in testResult.Questions)
+            {
+                count = 0;
+                foreach (var answer in question.Answers)
+                {
+                    if (answer.IsRight == answer.IsSelected)
+                        count++;
+                }
+                if (count == question.Answers.Count)
+                    testResult.Result++;
+            }
+            testResult.Result *= (float)100 / testResult.Questions.Count;
+        }
+
+        [HttpPost("/test/addTestResult")]
+        public async Task<ActionResult> AddTestResult(TestResult testResult, [FromHeader] string Authorization)
         {
             try
             {
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
+                CalculateTestResult(ref testResult);
+                await _databaseService.AddTestResultAsync(testResult, _userHeader.Username);
+                return Ok("Added");
             }
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");
             }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
+            {
+                Debug.WriteLine(e);
+                return NotFound($"Database error: {e}");
+            }
+        }
 
+        [HttpPost("/test/getTestResult")]
+        public async Task<ActionResult<TestResult>> GetTestResult(GetTestRequest testRequest, [FromHeader] string Authorization)
+        {
             try
             {
-                int count;
-                foreach (var question in testResult.Questions)
-                {
-                    count = 0;
-                    foreach (var answer in question.Answers)
-                    {
-                        if (answer.IsRight == answer.IsSelected)
-                            count++;
-                    }
-                    if (count == question.Answers.Count)
-                        testResult.Result++;
-                }
-                testResult.Result *= 100 / testResult.Questions.Count;
-                await _databaseService.AddTestResultAsync(testResult, _userHeader.Username);
-                return Ok("Added");
+                _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
+                if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
+                    return Unauthorized("Token error");
+                var testResult = await _databaseService.GetTestResultAsync(testRequest.TestId);
+                return Ok(testResult);
+            }
+            catch (Newtonsoft.Json.JsonReaderException e)
+            {
+                return Unauthorized($"Token error: {e}");
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
+            {
+                Debug.WriteLine(e);
+                return NotFound($"Database error: {e}");
+            }
+        }
+
+        [HttpPost("/test/isUserCanCheckTestResult")]
+        public async Task<ActionResult<bool>> IsUserCanCheckTestResult(GetTestRequest testRequest, [FromHeader] string Authorization)
+        {
+            try
+            {
+                _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
+                if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
+                    return Unauthorized("Token error");
+                var testResult = await _databaseService.IsUserCanCheckTestResult(testRequest.TestId, _userHeader.Username);
+                return Ok(testResult);
+            }
+            catch (Newtonsoft.Json.JsonReaderException e)
+            {
+                return Unauthorized($"Token error: {e}");
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {

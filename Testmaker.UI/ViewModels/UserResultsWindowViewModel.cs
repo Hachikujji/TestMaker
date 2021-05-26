@@ -17,6 +17,7 @@ namespace TestMaker.UI.ViewModels
     public class UserResultsWindowViewmodel : ViewModelBase
     {
         public DelegateCommand ReturnButtonEvent { get; }
+        public DelegateCommand<object> ShowTestResultsButtonEvent { get; }
 
         private ObservableCollection<TestResult> _testResultList;
 
@@ -31,6 +32,7 @@ namespace TestMaker.UI.ViewModels
         public UserResultsWindowViewmodel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
         {
             ReturnButtonEvent = new DelegateCommand(ReturnButton);
+            ShowTestResultsButtonEvent = new DelegateCommand<object>(async (object testResult) => await ShowTestResultsButton(testResult));
             _tokenHandler = tokenHandler;
         }
 
@@ -51,6 +53,15 @@ namespace TestMaker.UI.ViewModels
         public void ReturnButton()
         {
             RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
+        }
+
+        public async Task ShowTestResultsButton(object testResultUI)
+        {
+            var testResult = (testResultUI as TestResult);
+            var navigationParameters = new NavigationParameters();
+            navigationParameters.Add("TestResultId", testResult.Id);
+            RegionManager.RequestNavigate(StaticProperties.ContentRegion, "CompletionTestWindow", navigationParameters);
+
         }
 
         private async Task<ObservableCollection<TestResult>> TryGetTestResultsList()

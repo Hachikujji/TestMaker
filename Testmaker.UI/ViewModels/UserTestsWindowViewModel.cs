@@ -232,12 +232,12 @@ namespace TestMaker.UI.ViewModels
             TestFilter = "";
             AllowedUsersFilter = "";
             AllowedUsersFiltered = null;
-            if (!((TestListFiltered = TestList = await TryGetTestList()) == null) || !((AllUsersFiltered = AllUsers = await TryGetUsernames()) == null))
+            if (!(await TryGetTestList()) || !(await TryGetUsernames()))
             {
                 if (await _tokenHandler.TryUpdateRefreshTokenAsync())
                 {
-                    TestListFiltered = TestList = await TryGetTestList();
-                    AllUsersFiltered = AllUsers = await TryGetUsernames();
+                    await TryGetTestList();
+                    await TryGetUsernames();
                 }
                 else
                 {
@@ -263,13 +263,16 @@ namespace TestMaker.UI.ViewModels
 
         #region Private Methods
 
-        private async Task<ObservableCollection<Test>> TryGetTestList()
+        private async Task<bool> TryGetTestList()
         {
             var response = await StaticProperties.Client.GetAsync("/test/getTestList/").ConfigureAwait(false);
             if (response.IsSuccessStatusCode)
-                return JsonConvert.DeserializeObject<ObservableCollection<Test>>(await response.Content.ReadAsStringAsync());
+            {
+                TestList = TestListFiltered = JsonConvert.DeserializeObject<ObservableCollection<Test>>(await response.Content.ReadAsStringAsync());
+                return true;
+            }
             else
-                return null;
+                return false;
         }
 
         private async Task<bool> TryAddAllowedUser(string username, Test test)
@@ -300,13 +303,16 @@ namespace TestMaker.UI.ViewModels
                 return false;
         }
 
-        private async Task<ObservableCollection<string>> TryGetUsernames()
+        private async Task<bool> TryGetUsernames()
         {
             var response = await StaticProperties.Client.GetAsync("/user/getUsernames/").ConfigureAwait(false);
             if (response.IsSuccessStatusCode)
-                return JsonConvert.DeserializeObject<ObservableCollection<string>>(await response.Content.ReadAsStringAsync());
+            {
+                AllUsersFiltered = AllUsers = JsonConvert.DeserializeObject<ObservableCollection<string>>(await response.Content.ReadAsStringAsync());
+                return true;
+            }
             else
-                return null;
+                return false;
         }
 
         private async Task<bool> TryGetAllowedUsers()

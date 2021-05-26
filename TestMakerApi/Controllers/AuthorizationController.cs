@@ -133,34 +133,40 @@ namespace TestMakerApi.Controllers
         [HttpPost("/user/refreshToken")]
         public async Task<ActionResult<UserAuthenticationResponse>> RefreshToken(UserAuthenticationResponse response)
         {
-            var user = await _databaseService.GetUserAsync(response.Id);
-            if (response.RefreshToken.Equals(user.RefreshToken.Token) && !user.RefreshToken.IsExpired)
-                return await Authorization(new UserAuthenticationRequest(user.Username, user.Password));
-            else
-                return Unauthorized("Refresh token expired");
+            try
+            {
+                var user = await _databaseService.GetUserAsync(response.Id);
+                if (response.RefreshToken.Equals(user.RefreshToken.Token) && !user.RefreshToken.IsExpired)
+                {
+                    Debug.WriteLine($"User {response.Username} refreshing JWT token");
+                    return await Authorization(new UserAuthenticationRequest(user.Username, user.Password));
+                }
+                else
+                    return Unauthorized("JWT token expired");
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
+            {
+                return NotFound($"Database error: {e}");
+            }
         }
 
         [HttpGet("/user/getUsernames")]
         public async Task<ActionResult<IList<string>>> GetUsernames([FromHeader] string Authorization)
         {
-            UserAuthorizationRequest userHeader;
+            UserAuthorizationRequest _userHeader;
             try
             {
-                userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
-            }
-            catch (Newtonsoft.Json.JsonReaderException e)
-            {
-                return BadRequest($"Wrong authorization header: {e}");
-            }
-            if (!_tokenHandlerService.ValidateToken(userHeader.JwtToken))
-                return Unauthorized("Token error");
-
-            try
-            {
+                _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
+                if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
+                    return Unauthorized("Token error");
                 var list = await _databaseService.GetUsernamesAsync();
                 return Ok(list);
             }
-            catch (Exception e)
+            catch (Newtonsoft.Json.JsonReaderException e)
+            {
+                return BadRequest($"Token error: {e}");
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
                 return NotFound($"Database error: {e}");
             }

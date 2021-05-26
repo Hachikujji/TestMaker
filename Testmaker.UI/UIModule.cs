@@ -26,6 +26,7 @@ namespace TestMaker.UI
             containerRegistry.RegisterForNavigation<UserResultsWindow>();
             containerRegistry.RegisterForNavigation<CompletionTestWindow>();
             containerRegistry.RegisterForNavigation<UserTestResultsWindow>();
+            containerRegistry.RegisterForNavigation<PreviewRightTestAnswersWindow>();
             containerRegistry.RegisterSingleton<ITokenHandler, TokenHandler>();
         }
     }

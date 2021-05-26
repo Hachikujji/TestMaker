@@ -15,7 +15,7 @@ namespace TestMakerApi.Services
         private const string ISSUER = "TestMakerServer";
         private const string AUDIENCE = "TestMakerClient";
         private const string KEY = "randomKey123randomKey321";
-        private const int LIFETIME = 10; // mins
+        private const int LIFETIME = 60; // mins
         private const int REFRESH_LIFETIME = 4; // hours
 
         private JwtSecurityTokenHandler _TokenHandler = new JwtSecurityTokenHandler();

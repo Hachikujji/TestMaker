@@ -38,10 +38,10 @@ namespace TestMaker.UI.ViewModels
 
         public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
-            if (!((AllowedTestList = await TryGetAllowedTestList()) == null))
+            if (!(await TryGetAllowedTestList()))
             {
                 if (await _tokenHandler.TryUpdateRefreshTokenAsync())
-                    AllowedTestList = await TryGetAllowedTestList();
+                    await TryGetAllowedTestList();
                 else
                 {
                     MessageBox.Show("Your token is expired.");
@@ -71,13 +71,16 @@ namespace TestMaker.UI.ViewModels
             }
         }
 
-        private async Task<ObservableCollection<Test>> TryGetAllowedTestList()
+        private async Task<bool> TryGetAllowedTestList()
         {
             var response = await StaticProperties.Client.GetAsync("/test/getAllowedTestList/").ConfigureAwait(false);
             if (response.IsSuccessStatusCode)
-                return JsonConvert.DeserializeObject<ObservableCollection<Test>>(await response.Content.ReadAsStringAsync());
+            {
+                AllowedTestList = JsonConvert.DeserializeObject<ObservableCollection<Test>>(await response.Content.ReadAsStringAsync());
+                return true;
+            }
             else
-                return null;
+                return false;
         }
     }
 }

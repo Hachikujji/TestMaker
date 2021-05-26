@@ -141,16 +141,21 @@ namespace TestMaker.Database.Services
             {
                 db.Attach(test);
                 foreach (var question in test.Questions)
-                {
-                    foreach (var answer in question.Answers)
-                        db.Remove(answer);
-                    db.Remove(question);
-                }
+                    db.RemoveRange(question.Answers);
+                db.RemoveRange(test.Questions);
+
                 var deleteAccessList = await db.TestAccess.Where(a => a.Test.Id == test.Id).ToListAsync();
-                foreach (var access in deleteAccessList)
+                db.RemoveRange(deleteAccessList);
+
+                var deleteResultList = await db.TestResult.Where(tr => tr.Test.Id == test.Id).Include(tr => ((TestResult)tr).Questions).ThenInclude(q => ((TestResultQuestion)q).Answers).ToListAsync();
+                foreach (var testResult in deleteResultList)
                 {
-                    db.Remove(access);
+                    foreach (var question in testResult.Questions)
+                        db.RemoveRange(question.Answers);
+                    db.RemoveRange(testResult.Questions);
                 }
+                db.RemoveRange(deleteResultList);
+
                 db.Remove(test);
                 await db.SaveChangesAsync();
             }
@@ -305,6 +310,7 @@ namespace TestMaker.Database.Services
                 return listofBestResults;
             }
         }
+
         public async Task<IList<TestResult>> GetBestTestResultsList(int testId)
         {
             using (var db = new DatabaseContext())
@@ -313,6 +319,28 @@ namespace TestMaker.Database.Services
                 List<TestResult> listofBestResults = new List<TestResult>(listOfResults.GroupBy(mr => mr.User).Select(grp => grp.OrderByDescending(mr => mr.Result).First()));
 
                 return listofBestResults;
+            }
+        }
+
+        public async Task<TestResult> GetTestResultAsync(int testResultId)
+        {
+            using (var db = new DatabaseContext())
+            {
+                var testResult = await db.TestResult.Where(tr => ((TestResult)tr).Id == testResultId).Include(tr => ((TestResult)tr).Questions).ThenInclude(q => ((TestResultQuestion)q).Answers).SingleOrDefaultAsync();
+                return testResult;
+            }
+        }
+
+        public async Task<bool> IsUserCanCheckTestResult(int testId, string username)
+        {
+            using (var db = new DatabaseContext())
+            {
+                var testResultCount = await db.TestResult.Where(tr => tr.Test.Id == testId && tr.User.Username == username).CountAsync();
+                var test = await db.Test.FindAsync(testId);
+                if (testResultCount == test.Attempts)
+                    return true;
+                else
+                    return false;
             }
         }
 
