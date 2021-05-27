@@ -18,9 +18,6 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ScrollViewer}">
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
@@ -30,19 +27,11 @@
 
                             <ScrollBar
                                 Name="PART_VerticalScrollBar"
+                                HorizontalAlignment="Right"
                                 Maximum="{TemplateBinding ScrollableHeight}"
                                 ViewportSize="{TemplateBinding ViewportHeight}"
                                 Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
                                 Value="{TemplateBinding VerticalOffset}" />
-                            <ScrollBar
-                                Name="PART_HorizontalScrollBar"
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Maximum="{TemplateBinding ScrollableWidth}"
-                                Orientation="Horizontal"
-                                ViewportSize="{TemplateBinding ViewportWidth}"
-                                Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
-                                Value="{TemplateBinding HorizontalOffset}" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -57,13 +46,8 @@
         </Grid.RowDefinitions>
         <ScrollViewer HorizontalScrollBarVisibility="Hidden" Style="{StaticResource LeftScrollViewer}">
             <Grid DataContext="{Binding TestResult, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="auto" />
-                </Grid.ColumnDefinitions>
                 <ItemsControl
                     Grid.Row="0"
-                    Grid.Column="0"
                     HorizontalAlignment="Center"
                     Grid.IsSharedSizeScope="True"
                     ItemsSource="{Binding Questions, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
