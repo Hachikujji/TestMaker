@@ -11,6 +11,7 @@ namespace TestMaker.Database.Models
 
         public string Password { get; set; }
 
+        // naming??
         public UserAuthenticationRequest(string u, string p)
         {
             Username = u;

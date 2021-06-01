@@ -164,6 +164,7 @@ namespace TestMaker.UI.ViewModels
                 AuthorizationError = $"Server Not Responding: {e}";
                 _errorTimer.Start();
             }
+            // no ui elements in VM!
             (PasswordBox as PasswordBox).Password = string.Empty;
         }
 

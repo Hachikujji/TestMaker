@@ -32,7 +32,7 @@ namespace TestMaker.Database.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=desktop-0lidgcq\mssql;Database=TestMaker;Trusted_Connection=True;MultipleActiveResultSets=true");
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=TestMaker;Trusted_Connection=True;MultipleActiveResultSets=true");
         }
     }
 }

@@ -17,7 +17,7 @@ namespace TestMaker.UI.ViewModels
     public class AllowedTestsWindowViewModel : ViewModelBase
     {
         #region Private Fields
-
+        // readonly
         private ObservableCollection<Test> _allowedTestList;
         private ITokenHandler _tokenHandler;
 
@@ -35,7 +35,7 @@ namespace TestMaker.UI.ViewModels
         #endregion Public Constructors
 
         #region Public Properties
-
+        // command, not event
         public DelegateCommand ReturnButtonEvent { get; }
         public DelegateCommand<object> StartTestButtonEvent { get; }
 
