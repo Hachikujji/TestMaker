@@ -48,6 +48,7 @@ namespace TestMakerApi.Controllers
         {
             try
             {
+                // why id and username into header?
                 _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
                 if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
                     return Unauthorized("Token error");
@@ -59,6 +60,7 @@ namespace TestMakerApi.Controllers
                 else
                     return ValidationProblem("Test is not valid");
             }
+            // ??
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return Unauthorized($"Token error: {e}");

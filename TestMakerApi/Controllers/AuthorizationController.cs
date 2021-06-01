@@ -25,7 +25,7 @@ namespace TestMakerApi.Controllers
     public class AuthorizationController : Controller
     {
         #region Private Fields
-
+        // all is readonly
         private IDatabaseService _databaseService;
         private ITokenHandlerService _tokenHandlerService;
 
@@ -87,8 +87,10 @@ namespace TestMakerApi.Controllers
                 await _databaseService.UpdateUserRefreshTokenAsync(user, refreshToken);
                 return Ok(new UserAuthenticationResponse(user, jwtToken, refreshToken.Token));
             }
+            // ??
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
+                // ?? why not found
                 return NotFound($"Database error: {e}");
             }
         }
@@ -99,7 +101,7 @@ namespace TestMakerApi.Controllers
         /// <param name="Authorization">Authorization class in header</param>
         /// <returns></returns>
         [HttpGet("/user/validateToken")]
-        public ActionResult ValidateToken([FromHeader] string Authorization)
+        public ActionResult ValidateToken([FromHeader] string Authorization)//
         {
             if (string.IsNullOrWhiteSpace(Authorization))
                 return BadRequest("Token not provided");
@@ -108,6 +110,7 @@ namespace TestMakerApi.Controllers
             {
                 userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
             }
+            // ?????
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return BadRequest($"Wrong authorization header: {e}");
@@ -117,7 +120,7 @@ namespace TestMakerApi.Controllers
                 return Unauthorized("Token is not valid");
             return Ok("Token is valid");
         }
-
+        // what for?
         /// <summary>
         /// Is user exists
         /// </summary>
@@ -170,6 +173,7 @@ namespace TestMakerApi.Controllers
                 var list = await _databaseService.GetUsernamesAsync();
                 return Ok(list);
             }
+            // ??
             catch (Newtonsoft.Json.JsonReaderException e)
             {
                 return BadRequest($"Token error: {e}");

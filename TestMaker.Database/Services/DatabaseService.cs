@@ -26,6 +26,7 @@ namespace TestMaker.Database.Services
         /// <returns>Task</returns>
         public async Task AddUserAsync(string username, string password)
         {
+            // why not use DI
             using (var db = new DatabaseContext())
             {
                 User user = new User(username, password);
@@ -285,8 +286,10 @@ namespace TestMaker.Database.Services
                 var test = await db.Test.FindAsync(testId);
                 try
                 {
+                    // naming
                     var a = db.Test.Include(t => ((Test)t).Questions).ThenInclude(q => ((TestQuestion)q).Answers).FirstOrDefault(t => t.Id == testId);
                 }
+                // ??
                 catch (Exception e)
                 {
                     Debug.WriteLine(e);
@@ -334,6 +337,7 @@ namespace TestMaker.Database.Services
             using (var db = new DatabaseContext())
             {
                 var test = await db.Test.Where(t => t.Id == id).SingleOrDefaultAsync();
+                // RETURN  test != null
                 if (test != null)
                     return true;
                 else
