@@ -11,10 +11,10 @@ namespace TestMaker.Database.Models
 
         public string Password { get; set; }
 
-        public UserAuthenticationRequest(string u, string p)
+        public UserAuthenticationRequest(string username, string password)
         {
-            Username = u;
-            Password = p;
+            Username = username;
+            Password = password;
         }
 
         public UserAuthenticationRequest()

@@ -13,4 +13,17 @@
 		<ProjectReference Include="..\TestMaker.Stuff\TestMaker.Stuff.csproj" />
 		<ProjectReference Include="..\Testmaker.UI\TestMaker.UI.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Resources\languages.Designer.cs">
+	    <DependentUpon>languages.resx</DependentUpon>
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\languages.resx">
+	    <LastGenOutput>languages.Designer.cs</LastGenOutput>
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	  </EmbeddedResource>
+	</ItemGroup>
 </Project>

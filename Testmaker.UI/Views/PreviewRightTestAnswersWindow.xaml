@@ -114,7 +114,7 @@
         <Button
             Grid.Row="2"
             Background="LightGreen"
-            Command="{Binding DataContext.ReturnButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+            Command="{Binding DataContext.ReturnButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
             Content="Return" />
     </Grid>
 </UserControl>

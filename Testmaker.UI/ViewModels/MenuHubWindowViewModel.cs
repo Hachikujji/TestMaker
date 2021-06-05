@@ -22,22 +22,22 @@ namespace TestMaker.UI.ViewModels
 
         public MenuHubWindowViewModel(IRegionManager regionManager) : base(regionManager)
         {
-            ReturnButtonEvent = new DelegateCommand(ReturnButton);
-            AddButtonEvent = new DelegateCommand(async () => await AddButton());
-            TestListButtonEvent = new DelegateCommand(async () => await TestListButton());
-            AllowedTestListButtonEvent = new DelegateCommand(async () => await AllowedTestListButton());
-            UserResultsButtonEvent = new DelegateCommand(async () => await UserResultsButton());
+            ReturnButtonCommand = new DelegateCommand(ReturnButton);
+            AddButtonCommand = new DelegateCommand(async () => await AddButton());
+            TestListButtonCommand = new DelegateCommand(async () => await TestListButton());
+            AllowedTestListButtonCommand = new DelegateCommand(async () => await AllowedTestListButton());
+            UserResultsButtonCommand = new DelegateCommand(async () => await UserResultsButton());
         }
 
         #endregion Public Constructors
 
         #region Public Properties
 
-        public DelegateCommand ReturnButtonEvent { get; }
-        public DelegateCommand AddButtonEvent { get; }
-        public DelegateCommand TestListButtonEvent { get; }
-        public DelegateCommand AllowedTestListButtonEvent { get; }
-        public DelegateCommand UserResultsButtonEvent { get; }
+        public DelegateCommand ReturnButtonCommand { get; }
+        public DelegateCommand AddButtonCommand { get; }
+        public DelegateCommand TestListButtonCommand { get; }
+        public DelegateCommand AllowedTestListButtonCommand { get; }
+        public DelegateCommand UserResultsButtonCommand { get; }
 
         #endregion Public Properties
 

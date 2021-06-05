@@ -3,9 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:ln="clr-namespace:TestMaker.UI.Resources"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
     prism:ViewModelLocator.AutoWireViewModel="True">
+    <UserControl.Resources />
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -71,7 +73,7 @@
                         Value="Black" />
                 </i:EventTrigger>
                 <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                    <i:InvokeCommandAction Command="{Binding DataContext.ReturnButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                    <i:InvokeCommandAction Command="{Binding DataContext.ReturnButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <materialDesign:PackIcon
@@ -139,7 +141,7 @@
                         <Grid Grid.Column="1">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                                    <i:InvokeCommandAction Command="{Binding DataContext.EditTestButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
+                                    <i:InvokeCommandAction Command="{Binding DataContext.EditTestButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                             <materialDesign:PackIcon
@@ -154,7 +156,7 @@
                         <Grid Grid.Column="2">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                                    <i:InvokeCommandAction Command="{Binding DataContext.DeleteTestButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
+                                    <i:InvokeCommandAction Command="{Binding DataContext.DeleteTestButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                             <materialDesign:PackIcon
@@ -169,7 +171,7 @@
                         <Grid Grid.Column="3">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                                    <i:InvokeCommandAction Command="{Binding DataContext.ShowUsersResultsButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
+                                    <i:InvokeCommandAction Command="{Binding DataContext.ShowUsersResultsButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                             <materialDesign:PackIcon
@@ -187,7 +189,7 @@
                             VerticalAlignment="Stretch">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                                    <i:InvokeCommandAction Command="{Binding DataContext.UpdateAllowedUsersButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
+                                    <i:InvokeCommandAction Command="{Binding DataContext.UpdateAllowedUsersButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                             <Label
@@ -214,7 +216,7 @@
                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                                <i:InvokeCommandAction Command="{Binding DataContext.AddAllowedUsersButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
+                                <i:InvokeCommandAction Command="{Binding DataContext.AddAllowedUsersButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                         <Label
@@ -239,7 +241,7 @@
                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                                <i:InvokeCommandAction Command="{Binding DataContext.DeleteAllowedUsersButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
+                                <i:InvokeCommandAction Command="{Binding DataContext.DeleteAllowedUsersButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                         <Label

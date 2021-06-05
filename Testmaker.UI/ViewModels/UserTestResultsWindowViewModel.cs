@@ -22,7 +22,7 @@ namespace TestMaker.UI.ViewModels
         #region Private Fields
 
         private ObservableCollection<TestResult> _testResultList;
-        private ITokenHandler _tokenHandler;
+        private readonly ITokenHandler _tokenHandler;
 
         #endregion Private Fields
 
@@ -30,8 +30,8 @@ namespace TestMaker.UI.ViewModels
 
         public UserTestResultsWindowViewModel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
         {
-            ShowTestResultsButtonEvent = new DelegateCommand<object>(async (object testUI) => await ShowTestResultsButtonAsync(testUI));
-            ReturnButtonEvent = new DelegateCommand(ReturnButton);
+            ShowTestResultsButtonCommand = new DelegateCommand<object>(async (object testUI) => await ShowTestResultsButtonAsync(testUI));
+            ReturnButtonCommand = new DelegateCommand(ReturnButton);
             _tokenHandler = tokenHandler;
         }
 
@@ -39,8 +39,8 @@ namespace TestMaker.UI.ViewModels
 
         #region Public Properties
 
-        public DelegateCommand ReturnButtonEvent { get; }
-        public DelegateCommand<object> ShowTestResultsButtonEvent { get; }
+        public DelegateCommand ReturnButtonCommand { get; }
+        public DelegateCommand<object> ShowTestResultsButtonCommand { get; }
 
         public ObservableCollection<TestResult> TestResultList
         {

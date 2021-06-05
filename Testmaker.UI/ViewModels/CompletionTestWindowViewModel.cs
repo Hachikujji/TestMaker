@@ -22,7 +22,7 @@ namespace TestMaker.UI.ViewModels
     {
         #region Private Fields
 
-        private ITokenHandler _tokenHandler;
+        private readonly ITokenHandler _tokenHandler;
 
         private TestResult _test;
 

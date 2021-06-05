@@ -121,7 +121,7 @@
         <Button
             Grid.Row="2"
             Background="LightGreen"
-            Command="{Binding DataContext.SendTestResultButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+            Command="{Binding DataContext.SendTestResultButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
             Content="Confirm answers" />
     </Grid>
 </UserControl>

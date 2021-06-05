@@ -16,6 +16,7 @@ using TestMaker.Stuff;
 using System.Windows;
 using System.Timers;
 using System.Windows.Controls;
+using System.Security;
 
 namespace TestMaker.UI.ViewModels
 {
@@ -31,6 +32,7 @@ namespace TestMaker.UI.ViewModels
         private UserAuthorizationRequest _userAuthorizationRequest;
 
         private string _username;
+        private string _password;
         private Timer _errorTimer = new Timer();
 
         #endregion Private Fields
@@ -44,8 +46,8 @@ namespace TestMaker.UI.ViewModels
             _errorTimer.Interval = 2000;
             _errorTimer.Elapsed += ErrorTimerElapsedEvent;
 
-            LoginButtonEvent = new DelegateCommand<object>(LoginButton);
-            RegistrationButtonEvent = new DelegateCommand<object>(RegistrationButton);
+            LoginButtonCommand = new DelegateCommand(LoginButton);
+            RegistrationButtonCommand = new DelegateCommand(RegistrationButton);
             AuthorizationErrorLogVisibility = Visibility.Collapsed;
 
             // HttpClient setup
@@ -78,9 +80,15 @@ namespace TestMaker.UI.ViewModels
             set { SetProperty(ref _username, value); }
         }
 
-        public DelegateCommand<object> LoginButtonEvent { get; }
+        public string Password
+        {
+            get { return _password; }
+            set { SetProperty(ref _password, value); }
+        }
 
-        public DelegateCommand<object> RegistrationButtonEvent { get; }
+        public DelegateCommand LoginButtonCommand { get; }
+
+        public DelegateCommand RegistrationButtonCommand { get; }
 
         #endregion Public Properties
 
@@ -89,13 +97,12 @@ namespace TestMaker.UI.ViewModels
         /// <summary>
         /// Login button event
         /// </summary>
-        /// <param name="PasswordBox">PasswordBox UI object</param>
-        public async void LoginButton(object PasswordBox)
+        /// <param name="PasswordUI">PasswordBox.Password string</param>
+        public async void LoginButton()
         {
-            string password = (PasswordBox as PasswordBox)?.Password;
-            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
                 return;
-            var userRequest = new UserAuthenticationRequest(Username, password);
+            var userRequest = new UserAuthenticationRequest(Username, Password);
             var json = JsonConvert.SerializeObject(userRequest);
             try
             {
@@ -122,23 +129,22 @@ namespace TestMaker.UI.ViewModels
                 AuthorizationError = $"Server Not Responding: {e}";
                 _errorTimer.Start();
             }
-            (PasswordBox as PasswordBox).Password = string.Empty;
+            Password = string.Empty;
         }
 
         /// <summary>
         /// Registration button event
         /// </summary>
-        /// <param name="PasswordBox">PasswordBox UI object</param>
-        public async void RegistrationButton(object PasswordBox)
+        /// <param name="PasswordUI">PasswordBox.Password string</param>
+        public async void RegistrationButton()
         {
-            string password = (PasswordBox as PasswordBox)?.Password;
-            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
             {
                 AuthorizationError = "Username or password is empty";
                 _errorTimer.Start();
                 return;
             }
-            var userRequest = new UserAuthenticationRequest(Username, password);
+            var userRequest = new UserAuthenticationRequest(Username, Password);
             var json = JsonConvert.SerializeObject(userRequest);
             try
             {
@@ -150,7 +156,7 @@ namespace TestMaker.UI.ViewModels
                     if (!isUserExists)
                     {
                         HttpResponseMessage addUserResponse = await StaticProperties.Client.PostAsync("user/addUser", new StringContent(json, Encoding.UTF8, "application/json"));
-                        LoginButton(PasswordBox);
+                        LoginButton();
                     }
                     else
                     {
@@ -164,7 +170,7 @@ namespace TestMaker.UI.ViewModels
                 AuthorizationError = $"Server Not Responding: {e}";
                 _errorTimer.Start();
             }
-            (PasswordBox as PasswordBox).Password = string.Empty;
+            Password = string.Empty;
         }
 
         /// <summary>
@@ -172,7 +178,7 @@ namespace TestMaker.UI.ViewModels
         /// </summary>
         private void ErrorTimerElapsedEvent(object sender, ElapsedEventArgs e)
         {
-            AuthorizationError = String.Empty;
+            AuthorizationError = string.Empty;
             _errorTimer.Stop();
         }
 

@@ -26,8 +26,8 @@ namespace TestMakerApi.Controllers
     {
         #region Private Fields
 
-        private IDatabaseService _databaseService;
-        private ITokenHandlerService _tokenHandlerService;
+        private readonly IDatabaseService _databaseService;
+        private readonly ITokenHandlerService _tokenHandlerService;
 
         #endregion Private Fields
 
@@ -89,7 +89,7 @@ namespace TestMakerApi.Controllers
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
-                return NotFound($"Database error: {e}");
+                return StatusCode(500);
             }
         }
 
@@ -126,16 +126,8 @@ namespace TestMakerApi.Controllers
         [HttpGet("/user/isUserExists/{username}")]
         public async Task<ActionResult<bool>> IsUserExists(string username)
         {
-            bool isUserExists;
-            try
-            {
-                isUserExists = await _databaseService.IsUserExistsAsync(username);
-                return Ok(isUserExists);
-            }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
-            {
-                return NotFound($"Database error: {e}");
-            }
+            var isUserExists = await _databaseService.IsUserExistsAsync(username);
+            return Ok(isUserExists);
         }
 
         [HttpPost("/user/refreshToken")]

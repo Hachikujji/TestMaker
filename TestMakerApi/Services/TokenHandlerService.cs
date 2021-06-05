@@ -14,11 +14,11 @@ namespace TestMakerApi.Services
     {
         #region Private Fields
 
-        private const string ISSUER = "TestMakerServer";
-        private const string AUDIENCE = "TestMakerClient";
-        private const string KEY = "randomKey123randomKey321";
-        private const int LIFETIME = 5; // mins
-        private const int REFRESH_LIFETIME = 4; // hours
+        private const string Issuer = "TestMakerServer";
+        private const string Audience = "TestMakerClient";
+        private const string Key = "randomKey123randomKey321";
+        private const int Lifetime = 5; // mins
+        private const int RefreshLifetime = 4; // hours
 
         private JwtSecurityTokenHandler _TokenHandler = new JwtSecurityTokenHandler();
 
@@ -35,10 +35,10 @@ namespace TestMakerApi.Services
             return new TokenValidationParameters()
             {
                 ValidateLifetime = true,
-                ValidIssuer = ISSUER,
+                ValidIssuer = Issuer,
                 ClockSkew = TimeSpan.Zero,
-                ValidAudience = AUDIENCE,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(KEY))
+                ValidAudience = Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Key))
             };
         }
 
@@ -48,7 +48,7 @@ namespace TestMakerApi.Services
         /// <returns>Symmetric Security Key</returns>
         public SymmetricSecurityKey GetSymmetricSecurityKey()
         {
-            return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(KEY));
+            return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Key));
         }
 
         /// <summary>
@@ -59,10 +59,10 @@ namespace TestMakerApi.Services
         {
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
-                    issuer: ISSUER,
-                    audience: AUDIENCE,
+                    issuer: Issuer,
+                    audience: Audience,
                     notBefore: now,
-                    expires: now.Add(TimeSpan.FromMinutes(LIFETIME)),
+                    expires: now.Add(TimeSpan.FromMinutes(Lifetime)),
                     signingCredentials: new SigningCredentials(GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
             return encodedJwt;
@@ -81,7 +81,7 @@ namespace TestMakerApi.Services
                 return new RefreshToken
                 {
                     Token = Convert.ToBase64String(randomBytes),
-                    Expires = DateTime.UtcNow.AddHours(REFRESH_LIFETIME),
+                    Expires = DateTime.UtcNow.AddHours(RefreshLifetime),
                     Created = DateTime.UtcNow
                 };
             }

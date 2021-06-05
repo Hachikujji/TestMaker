@@ -19,8 +19,8 @@ namespace TestMakerApi.Controllers
     {
         #region Private Fields
 
-        private IDatabaseService _databaseService;
-        private ITokenHandlerService _tokenHandlerService;
+        private readonly IDatabaseService _databaseService;
+        private readonly ITokenHandlerService _tokenHandlerService;
         private UserAuthorizationRequest _userHeader;
 
         #endregion Private Fields

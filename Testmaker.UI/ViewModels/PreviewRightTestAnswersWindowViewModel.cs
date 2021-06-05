@@ -20,7 +20,7 @@ namespace TestMaker.UI.ViewModels
     {
         #region Private Fields
 
-        private ITokenHandler _tokenHandler;
+        private readonly ITokenHandler _tokenHandler;
 
         private TestResult _test;
 
@@ -30,7 +30,7 @@ namespace TestMaker.UI.ViewModels
 
         public PreviewRightTestAnswersWindowViewModel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
         {
-            ReturnButtonEvent = new DelegateCommand(ReturnButton);
+            ReturnButtonCommand = new DelegateCommand(ReturnButton);
             _tokenHandler = tokenHandler;
         }
 
@@ -38,7 +38,7 @@ namespace TestMaker.UI.ViewModels
 
         #region Public Properties
 
-        public DelegateCommand ReturnButtonEvent { get; }
+        public DelegateCommand ReturnButtonCommand { get; }
 
         public TestResult TestResult
         {

@@ -121,10 +121,10 @@
                                                         Kind="WindowClose">
                                                         <i:Interaction.Triggers>
                                                             <i:EventTrigger EventName="MouseLeftButtonDown">
-                                                                <i:InvokeCommandAction Command="{Binding DataContext.RemoveAnswerEnterButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
+                                                                <i:InvokeCommandAction Command="{Binding DataContext.RemoveAnswerEnterButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
                                                             </i:EventTrigger>
                                                             <i:EventTrigger EventName="MouseLeftButtonUp">
-                                                                <i:InvokeCommandAction Command="{Binding DataContext.RemoveAnswerButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" />
+                                                                <i:InvokeCommandAction Command="{Binding DataContext.RemoveAnswerButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" />
                                                             </i:EventTrigger>
                                                         </i:Interaction.Triggers>
                                                     </materialDesign:PackIcon>
@@ -140,12 +140,12 @@
                                     <Button
                                         Grid.Row="2"
                                         Background="OrangeRed"
-                                        Command="{Binding DataContext.RemoveQuestionButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                        Command="{Binding DataContext.RemoveQuestionButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                         CommandParameter="{Binding}"
                                         Content="Remove question" />
                                     <Button
                                         Grid.Row="3"
-                                        Command="{Binding DataContext.AddAnswerButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                        Command="{Binding DataContext.AddAnswerButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                         CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}"
                                         Content="Add answer" />
                                 </Grid>
@@ -184,7 +184,7 @@
                                                 Value="Black" />
                                         </i:EventTrigger>
                                         <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                                            <i:InvokeCommandAction Command="{Binding DataContext.ReturnButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                                            <i:InvokeCommandAction Command="{Binding DataContext.ReturnButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                     <materialDesign:PackIcon
@@ -230,12 +230,12 @@
         </ScrollViewer>
         <Button
             Grid.Row="1"
-            Command="{Binding DataContext.AddQuestionButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+            Command="{Binding DataContext.AddQuestionButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
             Content="Add question" />
         <Button
             Grid.Row="2"
             Background="LightGreen"
-            Command="{Binding DataContext.CreateTestButtonEvent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+            Command="{Binding DataContext.CreateTestButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
             Content="{Binding DataContext.CreateTestButtonName, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
     </Grid>
 </UserControl>

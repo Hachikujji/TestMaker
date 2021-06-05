@@ -23,7 +23,7 @@ namespace TestMaker.UI.ViewModels
 
         private ObservableCollection<Test> _testList;
         private ObservableCollection<Test> _testListFiltered;
-        private ITokenHandler _tokenHandler;
+        private readonly ITokenHandler _tokenHandler;
         private Test _currentTest;
         private string _testFilter;
         private string _allowedUsersFilter;
@@ -40,13 +40,13 @@ namespace TestMaker.UI.ViewModels
             AllowedUsersFilter = "";
             AllowedUsers = new ObservableCollection<string>();
             _tokenHandler = tokenHandler;
-            DeleteTestButtonEvent = new DelegateCommand<object>(async (object test) => await DeleteTestButton(test));
-            UpdateAllowedUsersButtonEvent = new DelegateCommand(async () => await UpdateAllowedUsersButton());
-            AddAllowedUsersButtonEvent = new DelegateCommand<object>(async (object test) => await AddAllowedUsersButton(test));
-            DeleteAllowedUsersButtonEvent = new DelegateCommand<object>(async (object test) => await DeleteAllowedUsersButton(test));
-            EditTestButtonEvent = new DelegateCommand<object>(EditTestButton);
-            ShowUsersResultsButtonEvent = new DelegateCommand<object>(ShowUsersResultsButton);
-            ReturnButtonEvent = new DelegateCommand(ReturnButton);
+            DeleteTestButtonCommand = new DelegateCommand<object>(async (object test) => await DeleteTestButton(test));
+            UpdateAllowedUsersButtonCommand = new DelegateCommand(async () => await UpdateAllowedUsersButton());
+            AddAllowedUsersButtonCommand = new DelegateCommand<object>(async (object test) => await AddAllowedUsersButton(test));
+            DeleteAllowedUsersButtonCommand = new DelegateCommand<object>(async (object test) => await DeleteAllowedUsersButton(test));
+            EditTestButtonCommand = new DelegateCommand<object>(EditTestButton);
+            ShowUsersResultsButtonCommand = new DelegateCommand<object>(ShowUsersResultsButton);
+            ReturnButtonCommand = new DelegateCommand(ReturnButton);
         }
 
         #endregion Public Constructors
@@ -113,13 +113,13 @@ namespace TestMaker.UI.ViewModels
             set { SetProperty(ref _allowedUsersFilter, value); UpdateFilteredAllowedUserList(value); }
         }
 
-        public DelegateCommand<object> DeleteTestButtonEvent { get; }
-        public DelegateCommand UpdateAllowedUsersButtonEvent { get; }
-        public DelegateCommand<object> AddAllowedUsersButtonEvent { get; }
-        public DelegateCommand<object> DeleteAllowedUsersButtonEvent { get; }
-        public DelegateCommand<object> EditTestButtonEvent { get; }
-        public DelegateCommand<object> ShowUsersResultsButtonEvent { get; }
-        public DelegateCommand ReturnButtonEvent { get; }
+        public DelegateCommand<object> DeleteTestButtonCommand { get; }
+        public DelegateCommand UpdateAllowedUsersButtonCommand { get; }
+        public DelegateCommand<object> AddAllowedUsersButtonCommand { get; }
+        public DelegateCommand<object> DeleteAllowedUsersButtonCommand { get; }
+        public DelegateCommand<object> EditTestButtonCommand { get; }
+        public DelegateCommand<object> ShowUsersResultsButtonCommand { get; }
+        public DelegateCommand ReturnButtonCommand { get; }
 
         private ObservableCollection<string> _allowedUsers;
         private ObservableCollection<string> _allowedUsersFiltered;

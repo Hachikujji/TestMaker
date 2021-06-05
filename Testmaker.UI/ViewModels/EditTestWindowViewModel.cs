@@ -26,7 +26,7 @@ namespace TestMaker.UI.ViewModels
         private int _attempts;
         private string _testName;
         private TestQuestion _testQuestion;
-        private ITokenHandler _tokenHandler;
+        private readonly ITokenHandler _tokenHandler;
 
         #endregion Private Fields
 
@@ -72,13 +72,13 @@ namespace TestMaker.UI.ViewModels
             set { SetProperty(ref _testQuestion, value); }
         }
 
-        public DelegateCommand AddQuestionButtonEvent { get; }
-        public DelegateCommand<object> AddAnswerButtonEvent { get; }
-        public DelegateCommand<object> RemoveQuestionButtonEvent { get; }
-        public DelegateCommand<object> RemoveAnswerButtonEvent { get; }
-        public DelegateCommand<object> RemoveAnswerEnterButtonEvent { get; }
-        public DelegateCommand CreateTestButtonEvent { get; }
-        public DelegateCommand ReturnButtonEvent { get; }
+        public DelegateCommand AddQuestionButtonCommand { get; }
+        public DelegateCommand<object> AddAnswerButtonCommand { get; }
+        public DelegateCommand<object> RemoveQuestionButtonCommand { get; }
+        public DelegateCommand<object> RemoveAnswerButtonCommand { get; }
+        public DelegateCommand<object> RemoveAnswerEnterButtonCommand { get; }
+        public DelegateCommand CreateTestButtonCommand { get; }
+        public DelegateCommand ReturnButtonCommand { get; }
         public ObservableCollection<int> NumbersOfAttempts { get; set; }
 
         #endregion Public Properties
@@ -88,13 +88,13 @@ namespace TestMaker.UI.ViewModels
         public EditTestWindowViewModel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
         {
             _tokenHandler = tokenHandler;
-            AddQuestionButtonEvent = new DelegateCommand(AddQuestionButton);
-            AddAnswerButtonEvent = new DelegateCommand<object>(AddAnswerButton);
-            RemoveQuestionButtonEvent = new DelegateCommand<object>(RemoveQuestionButton);
-            RemoveAnswerButtonEvent = new DelegateCommand<object>(RemoveAnswerButton);
-            ReturnButtonEvent = new DelegateCommand(ReturnButton);
-            RemoveAnswerEnterButtonEvent = new DelegateCommand<object>(RemoveAnswerEnterButton);
-            CreateTestButtonEvent = new DelegateCommand(async () => await CreateTestButton());
+            AddQuestionButtonCommand = new DelegateCommand(AddQuestionButton);
+            AddAnswerButtonCommand = new DelegateCommand<object>(AddAnswerButton);
+            RemoveQuestionButtonCommand = new DelegateCommand<object>(RemoveQuestionButton);
+            RemoveAnswerButtonCommand = new DelegateCommand<object>(RemoveAnswerButton);
+            ReturnButtonCommand = new DelegateCommand(ReturnButton);
+            RemoveAnswerEnterButtonCommand = new DelegateCommand<object>(RemoveAnswerEnterButton);
+            CreateTestButtonCommand = new DelegateCommand(async () => await CreateTestButton());
             Test = new Test("New test", StaticProperties.CurrentUserResponseHeader.Username, 0, new ObservableCollection<TestQuestion>());
             NumbersOfAttempts = new ObservableCollection<int>();
             for (int i = 1; i < 6; i++)
