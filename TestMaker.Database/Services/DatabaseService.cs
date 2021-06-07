@@ -16,12 +16,20 @@ namespace TestMaker.Database.Services
 {
     public class DatabaseService : IDatabaseService
     {
-        private readonly DatabaseContext _dbContext;
+        #region Public Constructors
 
         public DatabaseService(DatabaseContext databaseContext)
         {
             _dbContext = databaseContext;
         }
+
+        #endregion Public Constructors
+
+        #region Private Fields
+
+        private readonly DatabaseContext _dbContext;
+
+        #endregion Private Fields
 
         #region User
 
@@ -57,9 +65,7 @@ namespace TestMaker.Database.Services
         public async Task<bool> IsUserExistsAsync(string username)
         {
             var u = await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
-            if (u == null)
-                return false;
-            return true;
+            return u != null;
         }
 
         /// <summary>
@@ -69,7 +75,8 @@ namespace TestMaker.Database.Services
         /// <returns>user</returns>
         public async Task<User> GetUserAsync(int id)
         {
-            return await _dbContext.Users.FindAsync(id);
+            var user = await _dbContext.Users.FindAsync(id);
+            return user;
         }
 
         /// <summary>
@@ -80,17 +87,8 @@ namespace TestMaker.Database.Services
         /// <returns>user</returns>
         public async Task<User> GetUserAsync(string username, string password)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username && x.Password == password);
-        }
-
-        /// <summary>
-        /// Get user async by username
-        /// </summary>
-        /// <param name="username">Username</param>
-        /// <returns>User</returns>
-        private async Task<User> GetUserAsync(string username)
-        {
-            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username && x.Password == password);
+            return user;
         }
 
         /// <summary>
@@ -115,6 +113,17 @@ namespace TestMaker.Database.Services
             user.RefreshToken = refreshToken;
             _dbContext.Users.Update(user);
             await _dbContext.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Get user async by username
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <returns>User</returns>
+        private async Task<User> GetUserAsync(string username)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username);
+            return user;
         }
 
         #endregion User
@@ -242,7 +251,7 @@ namespace TestMaker.Database.Services
         /// <returns>Test</returns>
         public async Task<Test> GetTestAsync(int testId)
         {
-            var test = _dbContext.Test.Include(t => ((Test)t).Questions).ThenInclude(q => ((TestQuestion)q).Answers).FirstOrDefault(t => t.Id == testId);
+            var test = await _dbContext.Test.Include(t => ((Test)t).Questions).ThenInclude(q => ((TestQuestion)q).Answers).FirstOrDefaultAsync(t => t.Id == testId);
             return test;
         }
 
@@ -309,18 +318,6 @@ namespace TestMaker.Database.Services
         }
 
         /// <summary>
-        /// Get amount of test attempts left async
-        /// </summary>
-        /// <param name="test">Test</param>
-        /// <param name="username">Username</param>
-        /// <returns>int amount</returns>
-        private async Task<int> GetTestAttemptsLeftAsync(Test test, string username)
-        {
-            var AttemptCount = (await _dbContext.TestResult.Where(ta => ta.User.Username == username && ta.Test.Id == test.Id).ToListAsync()).Count;
-            return AttemptCount;
-        }
-
-        /// <summary>
         /// Add test result async
         /// </summary>
         /// <param name="testResult">Test result</param>
@@ -345,7 +342,6 @@ namespace TestMaker.Database.Services
         {
             var listOfResults = await _dbContext.TestResult.Where(tr => tr.User.Username == username).Include(tr => tr.Test).ToListAsync();
             List<TestResult> listofBestResults = new List<TestResult>(listOfResults.GroupBy(mr => mr.Test).Select(grp => grp.OrderByDescending(mr => mr.Result).First()));
-
             return listofBestResults;
         }
 
@@ -358,7 +354,6 @@ namespace TestMaker.Database.Services
         {
             var listOfResults = await _dbContext.TestResult.Where(tr => tr.Test.Id == testId).Include(tr => tr.User).ToListAsync();
             List<TestResult> listofBestResults = new List<TestResult>(listOfResults.GroupBy(mr => mr.User).Select(grp => grp.OrderByDescending(mr => mr.Result).First()));
-
             return listofBestResults;
         }
 
@@ -383,10 +378,19 @@ namespace TestMaker.Database.Services
         {
             var testResultCount = await _dbContext.TestResult.Where(tr => tr.Test.Id == testId && tr.User.Username == username).CountAsync();
             var test = await _dbContext.Test.FindAsync(testId);
-            if (testResultCount == test.Attempts)
-                return true;
-            else
-                return false;
+            return testResultCount == test.Attempts;
+        }
+
+        /// <summary>
+        /// Get amount of test attempts left async
+        /// </summary>
+        /// <param name="test">Test</param>
+        /// <param name="username">Username</param>
+        /// <returns>int amount</returns>
+        private async Task<int> GetTestAttemptsLeftAsync(Test test, string username)
+        {
+            var AttemptCount = (await _dbContext.TestResult.Where(ta => ta.User.Username == username && ta.Test.Id == test.Id).ToListAsync()).Count;
+            return AttemptCount;
         }
 
         #endregion Test

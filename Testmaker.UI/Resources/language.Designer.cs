@@ -61,7 +61,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Add answer.
         /// </summary>
         public static string AddAnswer {
             get {
@@ -70,7 +70,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Add question.
         /// </summary>
         public static string AddQuestion {
             get {
@@ -88,7 +88,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Allowed users.
         /// </summary>
         public static string AllowedUsers {
             get {
@@ -97,7 +97,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to All users.
         /// </summary>
         public static string AllUsers {
             get {
@@ -106,7 +106,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Answer.
         /// </summary>
         public static string Answer {
             get {
@@ -115,7 +115,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Answer count error in {0}.
         /// </summary>
         public static string AnswerCountError {
             get {
@@ -124,7 +124,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Answer name error in {0}.
         /// </summary>
         public static string AnswerNameError {
             get {
@@ -133,7 +133,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Attempt count error.
         /// </summary>
         public static string AttemptCountError {
             get {
@@ -142,7 +142,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Attempts.
         /// </summary>
         public static string Attempts {
             get {
@@ -151,7 +151,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Attempts left.
         /// </summary>
         public static string AttemptsLeft {
             get {
@@ -160,7 +160,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Wrong username or password.
         /// </summary>
         public static string AuthorizationError {
             get {
@@ -169,7 +169,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Confirm action.
         /// </summary>
         public static string ConfirmAction {
             get {
@@ -178,7 +178,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Confirm answers.
         /// </summary>
         public static string ConfirmAnswers {
             get {
@@ -187,7 +187,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to The correct answers to the test will be available after passing all attempts..
         /// </summary>
         public static string CorrectAnswersNotAvailable {
             get {
@@ -196,7 +196,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Create test.
         /// </summary>
         public static string CreateTest {
             get {
@@ -205,7 +205,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Creator.
         /// </summary>
         public static string Creator {
             get {
@@ -214,7 +214,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Login.
         /// </summary>
         public static string Login {
             get {
@@ -223,7 +223,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Name.
         /// </summary>
         public static string Name {
             get {
@@ -232,7 +232,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to New Test.
         /// </summary>
         public static string NewTest {
             get {
@@ -250,7 +250,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Question.
         /// </summary>
         public static string Question {
             get {
@@ -259,7 +259,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Question count error.
         /// </summary>
         public static string QuestionCountError {
             get {
@@ -268,7 +268,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to One of question name is empty.
         /// </summary>
         public static string QuestionNameEmpty {
             get {
@@ -277,7 +277,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Registration.
         /// </summary>
         public static string Registration {
             get {
@@ -286,7 +286,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Remove question.
         /// </summary>
         public static string RemoveQuestion {
             get {
@@ -295,7 +295,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Return.
         /// </summary>
         public static string Return {
             get {
@@ -304,7 +304,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Right answers count error in {0}.
         /// </summary>
         public static string RightAnswerCountError {
             get {
@@ -313,7 +313,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Server error.
         /// </summary>
         public static string ServerError {
             get {
@@ -322,7 +322,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Test.
         /// </summary>
         public static string Test {
             get {
@@ -331,7 +331,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Test name.
         /// </summary>
         public static string TestName {
             get {
@@ -340,7 +340,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Test name error.
         /// </summary>
         public static string TestNameError {
             get {
@@ -349,7 +349,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Do you want to start test: {0}.
         /// </summary>
         public static string TestStartConfirm {
             get {
@@ -358,7 +358,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Your token is expired..
         /// </summary>
         public static string TokenExpired {
             get {
@@ -367,7 +367,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Update test.
         /// </summary>
         public static string UpdateTest {
             get {
@@ -376,7 +376,7 @@ namespace TestMaker.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to User already exists.
         /// </summary>
         public static string UserAlreadyExists {
             get {

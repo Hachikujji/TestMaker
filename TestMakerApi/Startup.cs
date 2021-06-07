@@ -64,7 +64,9 @@ namespace TestMakerApi
             services.AddScoped<DatabaseContext>();
             services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddScoped<ITokenHandlerService, TokenHandlerService>();
+#pragma warning disable ASP0000
             var tokenHandler = services.BuildServiceProvider().GetRequiredService<ITokenHandlerService>();
+#pragma warning restore ASP0000
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(cfg =>
             {

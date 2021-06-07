@@ -176,7 +176,7 @@
     <value>Вы уверены?</value>
   </data>
   <data name="TestStartConfirm" xml:space="preserve">
-    <value>Вы хотите начать проходить тест : {0} ? </value>
+    <value>Вы хотите начать проходить тест : {0} ?</value>
   </data>
   <data name="AuthorizationError" xml:space="preserve">
     <value>Неверное имя пользователя или пароль</value>

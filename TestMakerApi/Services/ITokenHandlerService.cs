@@ -16,7 +16,5 @@ namespace TestMakerApi.Services
         public string CreateJwtToken(int userId, string username);
 
         public RefreshToken CreateRefreshToken();
-
-        public bool ValidateToken(string JwtToken);
     }
 }

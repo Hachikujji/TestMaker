@@ -26,6 +26,7 @@ namespace TestMaker.UI.ViewModels
     {
         #region Private Fields
 
+        private const int _timerInterval = 2000;
         private string _authorizationError;
 
         // Visibility of authorization error message
@@ -48,7 +49,7 @@ namespace TestMaker.UI.ViewModels
         {
             // timer setup
             _errorTimer.AutoReset = false;
-            _errorTimer.Interval = 2000;
+            _errorTimer.Interval = _timerInterval;
             _errorTimer.Elapsed += ErrorTimerElapsedEvent;
 
             LoginButtonCommand = new DelegateCommand(LoginButton);
@@ -114,7 +115,6 @@ namespace TestMaker.UI.ViewModels
         }
 
         public DelegateCommand LoginButtonCommand { get; }
-
         public DelegateCommand RegistrationButtonCommand { get; }
         public DelegateCommand LanguageChangedCommand { get; }
 

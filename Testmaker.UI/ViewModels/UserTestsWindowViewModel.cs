@@ -21,9 +21,9 @@ namespace TestMaker.UI.ViewModels
     {
         #region Private Fields
 
+        private readonly ITokenHandler _tokenHandler;
         private ObservableCollection<Test> _testList;
         private ObservableCollection<Test> _testListFiltered;
-        private readonly ITokenHandler _tokenHandler;
         private Test _currentTest;
         private string _testFilter;
         private string _allowedUsersFilter;
@@ -141,17 +141,13 @@ namespace TestMaker.UI.ViewModels
             {
                 var test = (testUI as Test);
                 if (!(await TryDeleteTest(test)))
-                {
                     if (await _tokenHandler.TryRefreshTokenAsync())
-                    {
                         await TryDeleteTest(test);
-                    }
                     else
                     {
                         MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                         RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                     }
-                }
             }
         }
 
@@ -162,17 +158,13 @@ namespace TestMaker.UI.ViewModels
         public async Task UpdateAllowedUsersButton()
         {
             if (!(await TryGetAllowedUsers()))
-            {
                 if (await _tokenHandler.TryRefreshTokenAsync())
-                {
                     await TryGetAllowedUsers();
-                }
                 else
                 {
                     MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                 }
-            }
         }
 
         /// <summary>
@@ -187,17 +179,13 @@ namespace TestMaker.UI.ViewModels
                 if (AllowedUsers.Contains(username as string))
                     return;
                 if (!(await TryAddAllowedUser((username as string), SelectedTest)))
-                {
                     if (await _tokenHandler.TryRefreshTokenAsync())
-                    {
                         await TryAddAllowedUser((username as string), SelectedTest);
-                    }
                     else
                     {
                         MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                         RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                     }
-                }
             }
             else
                 MessageBox.Show("Choose test");
@@ -213,17 +201,13 @@ namespace TestMaker.UI.ViewModels
             if (SelectedTest != null)
             {
                 if (!(await TryDeleteAllowedUser((username as string), SelectedTest)))
-                {
                     if (await _tokenHandler.TryRefreshTokenAsync())
-                    {
                         await TryDeleteAllowedUser((username as string), SelectedTest);
-                    }
                     else
                     {
                         MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                         RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                     }
-                }
             }
             else
                 MessageBox.Show("Choose test");
@@ -280,7 +264,6 @@ namespace TestMaker.UI.ViewModels
             AllowedUsersFilter = "";
             AllowedUsersFiltered = null;
             if (!(await TryGetTestList()) || !(await TryGetUsernames()))
-            {
                 if (await _tokenHandler.TryRefreshTokenAsync())
                 {
                     await TryGetTestList();
@@ -291,7 +274,6 @@ namespace TestMaker.UI.ViewModels
                     MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                 }
-            }
         }
 
         #endregion Public Methods

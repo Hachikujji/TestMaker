@@ -58,21 +58,15 @@ namespace TestMaker.UI.ViewModels
         /// <param name="navigationContext">key=value vars</param>
         public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
-            int testId = 0;
             string TestIdString = navigationContext.Parameters["TestId"].ToString();
-            if (!string.IsNullOrWhiteSpace(TestIdString))
-                if (int.TryParse(TestIdString, out testId))
-                    if (!await TryGetTest(testId))
+            if (int.TryParse(TestIdString, out int testId))
+                if (!await TryGetTest(testId))
+                    if (await _tokenHandler.TryRefreshTokenAsync())
+                        await TryGetTest(testId);
+                    else
                     {
-                        if (await _tokenHandler.TryRefreshTokenAsync())
-                        {
-                            await TryGetTest(testId);
-                        }
-                        else
-                        {
-                            MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
-                            RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
-                        }
+                        MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
+                        RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                     }
         }
 
@@ -127,9 +121,7 @@ namespace TestMaker.UI.ViewModels
             if (!await TrySendTest())
             {
                 if (await _tokenHandler.TryRefreshTokenAsync())
-                {
                     await TrySendTest();
-                }
                 else
                 {
                     MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));

@@ -14,6 +14,8 @@ namespace TestMaker.UI.Services
 {
     public class TokenHandler : ITokenHandler
     {
+        #region Public Methods
+
         /// <summary>
         /// try update JWT token async
         /// </summary>
@@ -32,5 +34,7 @@ namespace TestMaker.UI.Services
             else
                 return false;
         }
+
+        #endregion Public Methods
     }
 }

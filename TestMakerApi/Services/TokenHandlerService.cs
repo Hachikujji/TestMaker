@@ -21,7 +21,7 @@ namespace TestMakerApi.Services
         private const int Lifetime = 5; // mins
         private const int RefreshLifetime = 4; // hours
 
-        private JwtSecurityTokenHandler _TokenHandler = new JwtSecurityTokenHandler();
+        private readonly JwtSecurityTokenHandler _TokenHandler = new JwtSecurityTokenHandler();
 
         #endregion Private Fields
 
@@ -90,25 +90,6 @@ namespace TestMakerApi.Services
                     Expires = DateTime.UtcNow.AddHours(RefreshLifetime),
                     Created = DateTime.UtcNow
                 };
-            }
-        }
-
-        /// <summary>
-        /// Validates token
-        /// </summary>
-        /// <param name="JwtToken"> JWT token </param>
-        /// <returns> true if token is valid, else returns false</returns>
-        public bool ValidateToken(string JwtToken)
-        {
-            try
-            {
-                SecurityToken validated = null;
-                _TokenHandler.ValidateToken(JwtToken, GetTokenValidationParameters(), out validated);
-                return true;
-            }
-            catch
-            {
-                return false;
             }
         }
 

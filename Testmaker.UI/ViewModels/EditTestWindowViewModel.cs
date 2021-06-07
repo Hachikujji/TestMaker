@@ -23,11 +23,11 @@ namespace TestMaker.UI.ViewModels
     {
         #region Private Fields
 
+        private readonly ITokenHandler _tokenHandler;
         private Test _test;
         private int _attempts;
         private string _testName;
         private TestQuestion _testQuestion;
-        private readonly ITokenHandler _tokenHandler;
 
         #endregion Private Fields
 
@@ -38,8 +38,6 @@ namespace TestMaker.UI.ViewModels
             get { return _test; }
             set { SetProperty(ref _test, value); }
         }
-
-        private bool _isTestEditing;
 
         public bool IsTestEditing
         {
@@ -58,8 +56,6 @@ namespace TestMaker.UI.ViewModels
             get { return _testName; }
             set { SetProperty(ref _testName, value); }
         }
-
-        private string _createTestButtonName;
 
         public string CreateTestButtonName
         {
@@ -81,6 +77,8 @@ namespace TestMaker.UI.ViewModels
         public DelegateCommand CreateTestButtonCommand { get; }
         public DelegateCommand ReturnButtonCommand { get; }
         public ObservableCollection<int> NumbersOfAttempts { get; set; }
+        private bool _isTestEditing;
+        private string _createTestButtonName;
 
         #endregion Public Properties
 
@@ -259,17 +257,13 @@ namespace TestMaker.UI.ViewModels
                     int.TryParse(editTestIdString, out editTestId);
                 if (editTestId > 0)
                     if (!await TryGetTest(editTestId))
-                    {
                         if (await _tokenHandler.TryRefreshTokenAsync())
-                        {
                             await TryGetTest(editTestId);
-                        }
                         else
                         {
                             MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                             RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                         }
-                    }
             }
             else
             {

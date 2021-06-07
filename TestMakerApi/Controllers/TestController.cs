@@ -40,7 +40,6 @@ namespace TestMakerApi.Controllers
         /// Add test
         /// </summary>
         /// <param name="test">Test</param>
-        /// <returns>Ok() if added, ValidationProblem() if test is not valid, Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/addTest")]
         [Authorize]
         public async Task<ActionResult> AddTest(Test test)
@@ -64,7 +63,6 @@ namespace TestMakerApi.Controllers
         /// <summary>
         /// Get test list of user
         /// </summary>
-        /// <returns>Ok(Test list), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpGet("/test/getTestList")]
         [Authorize]
         public async Task<ActionResult<IList<Test>>> GetTestList()
@@ -85,7 +83,6 @@ namespace TestMakerApi.Controllers
         /// Get user's test by test id
         /// </summary>
         /// <param name="testId">Test id</param>
-        /// <returns>Ok(Test), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/getTest")]
         [Authorize]
         public async Task<ActionResult<Test>> GetTest([FromBody] int testId)
@@ -105,7 +102,6 @@ namespace TestMakerApi.Controllers
         /// Delete test
         /// </summary>
         /// <param name="test">Test</param>
-        /// <returns>Ok() if deleted, Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/deleteTest")]
         [Authorize]
         public async Task<ActionResult> DeleteTest(Test test)
@@ -125,7 +121,6 @@ namespace TestMakerApi.Controllers
         /// Get a list of usernames who are allowed to take the test
         /// </summary>
         /// <param name="test">Test</param>
-        /// <returns>Ok(Usernames list), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/getTestAllowedUsers")]
         [Authorize]
         public async Task<ActionResult<IList<string>>> GetAllowedUsers(Test test)
@@ -145,7 +140,6 @@ namespace TestMakerApi.Controllers
         /// Allow the user to take the test
         /// </summary>
         /// <param name="testAccessRequest">Username and Test</param>
-        /// <returns>Ok(), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/addTaskAllowedUser")]
         [Authorize]
         public async Task<ActionResult<IList<string>>> AddTaskAllowedUser(AddTestAccessRequest testAccessRequest)
@@ -165,7 +159,6 @@ namespace TestMakerApi.Controllers
         /// Prevent the user from taking the test
         /// </summary>
         /// <param name="testAccessRequest"> Username and Test</param>
-        /// <returns>Ok(), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/deleteTaskAllowedUser")]
         [Authorize]
         public async Task<ActionResult<IList<string>>> DeleteTaskAllowedUser(AddTestAccessRequest testAccessRequest)
@@ -185,7 +178,6 @@ namespace TestMakerApi.Controllers
         /// Update test
         /// </summary>
         /// <param name="test">Test</param>
-        /// <returns>Ok(Allowed users), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/updateTest")]
         [Authorize]
         public async Task<ActionResult<IList<string>>> UpdateTest(Test test)
@@ -204,7 +196,6 @@ namespace TestMakerApi.Controllers
         /// <summary>
         /// Get list of tests that user is allowed to take
         /// </summary>
-        /// <returns>Ok(list of tests), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpGet("/test/getAllowedTestList")]
         [Authorize]
         public async Task<ActionResult<IList<Test>>> GetAllowedTestList()
@@ -225,7 +216,6 @@ namespace TestMakerApi.Controllers
         /// Get user's test result list (Where every test the user passes is the best)
         /// </summary>
         /// <param name="Authorization">Authorization class in header</param>
-        /// <returns>Ok(list of test results), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpGet("/test/getUserTestResultList")]
         [Authorize]
         public async Task<ActionResult<IList<TestResult>>> GetUserTestResultList()
@@ -246,7 +236,6 @@ namespace TestMakerApi.Controllers
         /// Get best result of every user, that passed the test
         /// </summary>
         /// <param name="testId">Test id</param>
-        /// <returns>Ok(list of test results), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/getTestResultList")]
         [Authorize]
         public async Task<ActionResult<IList<TestResult>>> GetTestResultList([FromBody] int testId)
@@ -266,7 +255,6 @@ namespace TestMakerApi.Controllers
         /// Add test result
         /// </summary>
         /// <param name="testResult">Test result</param>
-        /// <returns>Ok() if added, Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/addTestResult")]
         [Authorize]
         public async Task<ActionResult> AddTestResult(TestResult testResult)
@@ -289,7 +277,6 @@ namespace TestMakerApi.Controllers
         /// </summary>
         /// <param name="testId"></param>
         /// <param name="Authorization">Authorization class in header</param>
-        /// <returns>Ok(Test result), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/getTestResult")]
         [Authorize]
         public async Task<ActionResult<TestResult>> GetTestResult([FromBody] int testResultId)
@@ -310,7 +297,6 @@ namespace TestMakerApi.Controllers
         /// </summary>
         /// <param name="testId">Test id</param>
         /// <param name="Authorization">Authorization class in header</param>
-        /// <returns>Ok(true) if can, else Ok(false), Unauthorized() if token error, Not Found() if db error</returns>
         [HttpPost("/test/isUserCanCheckTestResult")]
         [Authorize]
         public async Task<ActionResult<bool>> IsUserCanCheckTestResult([FromBody] int testId)
@@ -335,7 +321,6 @@ namespace TestMakerApi.Controllers
         /// Validate test
         /// </summary>
         /// <param name="test">Test</param>
-        /// <returns>true if test is valid, else returns false</returns>
         private bool IsTestValid(ref Test test)
         {
             if (test.Attempts == 0 || test.Questions.Count == 0 || string.IsNullOrWhiteSpace(test.Name))
@@ -361,7 +346,6 @@ namespace TestMakerApi.Controllers
         /// <summary>
         /// calculate result of test results
         /// </summary>
-        /// <param name="testResult">Test result class</param>
         private void CalculateTestResult(ref TestResult testResult)
         {
             int count;

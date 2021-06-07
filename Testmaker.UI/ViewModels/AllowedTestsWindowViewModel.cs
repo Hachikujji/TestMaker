@@ -18,8 +18,8 @@ namespace TestMaker.UI.ViewModels
     {
         #region Private Fields
 
-        private ObservableCollection<Test> _allowedTestList;
         private readonly ITokenHandler _tokenHandler;
+        private ObservableCollection<Test> _allowedTestList;
 
         #endregion Private Fields
 
@@ -82,13 +82,12 @@ namespace TestMaker.UI.ViewModels
         public void StartTestButton(object testUI)
         {
             var test = (testUI as Test);
-            NavigationParameters navigationParameters = null;
             if (test != null)
             {
                 MessageBoxResult dialogResult = MessageBox.Show(string.Format(LocalizationService.GetLocalizedValue<string>("TestStartConfirm"), test.Name), LocalizationService.GetLocalizedValue<string>("ConfirmAction"), MessageBoxButton.YesNo);
                 if (dialogResult == MessageBoxResult.Yes)
                 {
-                    navigationParameters = new NavigationParameters();
+                    NavigationParameters navigationParameters = new NavigationParameters();
                     navigationParameters.Add("TestId", test.Id);
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, "CompletionTestWindow", navigationParameters);
                 }

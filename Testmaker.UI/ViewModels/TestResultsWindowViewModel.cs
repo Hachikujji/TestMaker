@@ -21,8 +21,8 @@ namespace TestMaker.UI.ViewModels
     {
         #region Private Fields
 
-        private ObservableCollection<TestResult> _testResultList;
         private readonly ITokenHandler _tokenHandler;
+        private ObservableCollection<TestResult> _testResultList;
 
         #endregion Private Fields
 
@@ -65,17 +65,13 @@ namespace TestMaker.UI.ViewModels
                     int.TryParse(editTestIdString, out editTestId);
                 if (editTestId > 0)
                     if (!await TryGetTestResultsList(editTestId))
-                    {
                         if (await _tokenHandler.TryRefreshTokenAsync())
-                        {
                             await TryGetTestResultsList(editTestId);
-                        }
                         else
                         {
                             MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                             RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                         }
-                    }
             }
         }
 

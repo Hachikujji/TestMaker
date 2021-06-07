@@ -48,7 +48,6 @@ namespace TestMakerApi.Controllers
         /// Add user
         /// </summary>
         /// <param name="userInfo">Username and password</param>
-        /// <returns>Ok() if added, BadRequest() if username of password is not valid or already exists, NotFound() if db error</returns>
         [HttpPost("/user/addUser")]
         public async Task<ActionResult<User>> AddUsers(UserAuthenticationRequest userInfo)
         {
@@ -73,7 +72,6 @@ namespace TestMakerApi.Controllers
         /// Authorization of user. Creates tokens and send them to user
         /// </summary>
         /// <param name="model">username and password</param>
-        /// <returns>Ok(UserAuthenticationResponce), BadRequest() if user not found, NotFound() if db error</returns>
         [HttpPost("/user/authorization")]
         public async Task<ActionResult<UserAuthenticationResponse>> Authorization(UserAuthenticationRequest model)
         {
@@ -98,7 +96,6 @@ namespace TestMakerApi.Controllers
         /// Is user exists
         /// </summary>
         /// <param name="username">Username</param>
-        /// <returns> Ok(true) if exists, else returns false, NotFound() if db error</returns>
         [HttpGet("/user/isUserExists/{username}")]
         public async Task<ActionResult<bool>> IsUserExists(string username)
         {
@@ -139,7 +136,6 @@ namespace TestMakerApi.Controllers
         /// <summary>
         /// Get string list of usernames
         /// </summary>
-        /// <returns>List<string></returns>
         [HttpGet("/user/getUsernames")]
         [Authorize]
         public async Task<ActionResult<IList<string>>> GetUsernames()

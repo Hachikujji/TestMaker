@@ -9,16 +9,24 @@ namespace TestMaker.UI.Services
 {
     public class PasswordBehavior : Behavior<PasswordBox>
     {
+        #region Public Fields
+
         public static readonly DependencyProperty PasswordProperty =
             DependencyProperty.Register("Password", typeof(string), typeof(PasswordBehavior), new PropertyMetadata(default(string)));
 
-        private bool _skipUpdate;
+        #endregion Public Fields
+
+        #region Public Properties
 
         public string Password
         {
             get { return (string)GetValue(PasswordProperty); }
             set { SetValue(PasswordProperty, value); }
         }
+
+        #endregion Public Properties
+
+        #region Protected Methods
 
         protected override void OnAttached()
         {
@@ -45,11 +53,23 @@ namespace TestMaker.UI.Services
             }
         }
 
+        #endregion Protected Methods
+
+        #region Private Fields
+
+        private bool _skipUpdate;
+
+        #endregion Private Fields
+
+        #region Private Methods
+
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             _skipUpdate = true;
             Password = AssociatedObject.Password;
             _skipUpdate = false;
         }
+
+        #endregion Private Methods
     }
 }

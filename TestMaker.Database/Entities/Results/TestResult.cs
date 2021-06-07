@@ -39,7 +39,6 @@ namespace TestMaker.Database.Entities
 
         public TestResult()
         {
-            Questions = new ObservableCollection<TestResultQuestion>();
         }
     }
 }

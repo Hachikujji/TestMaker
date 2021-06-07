@@ -107,105 +107,105 @@
     <value>Password:</value>
   </data>
   <data name="Login" xml:space="preserve">
-    <value></value>
+    <value>Login</value>
   </data>
   <data name="Registration" xml:space="preserve">
-    <value></value>
+    <value>Registration</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value></value>
+    <value>Name</value>
   </data>
   <data name="Creator" xml:space="preserve">
-    <value></value>
+    <value>Creator</value>
   </data>
   <data name="AttemptsLeft" xml:space="preserve">
-    <value></value>
+    <value>Attempts left</value>
   </data>
   <data name="ConfirmAnswers" xml:space="preserve">
-    <value></value>
+    <value>Confirm answers</value>
   </data>
   <data name="TestName" xml:space="preserve">
-    <value></value>
+    <value>Test name</value>
   </data>
   <data name="Attempts" xml:space="preserve">
-    <value></value>
+    <value>Attempts</value>
   </data>
   <data name="AddQuestion" xml:space="preserve">
-    <value></value>
+    <value>Add question</value>
   </data>
   <data name="CreateTest" xml:space="preserve">
-    <value></value>
+    <value>Create test</value>
   </data>
   <data name="UpdateTest" xml:space="preserve">
-    <value></value>
+    <value>Update test</value>
   </data>
   <data name="TokenExpired" xml:space="preserve">
-    <value></value>
+    <value>Your token is expired.</value>
   </data>
   <data name="RightAnswerCountError" xml:space="preserve">
-    <value></value>
+    <value>Right answers count error in {0}</value>
   </data>
   <data name="AnswerNameError" xml:space="preserve">
-    <value></value>
+    <value>Answer name error in {0}</value>
   </data>
   <data name="AnswerCountError" xml:space="preserve">
-    <value></value>
+    <value>Answer count error in {0}</value>
   </data>
   <data name="QuestionNameEmpty" xml:space="preserve">
-    <value></value>
+    <value>One of question name is empty</value>
   </data>
   <data name="QuestionCountError" xml:space="preserve">
-    <value></value>
+    <value>Question count error</value>
   </data>
   <data name="TestNameError" xml:space="preserve">
-    <value></value>
+    <value>Test name error</value>
   </data>
   <data name="AttemptCountError" xml:space="preserve">
-    <value></value>
+    <value>Attempt count error</value>
   </data>
   <data name="Question" xml:space="preserve">
-    <value></value>
+    <value>Question</value>
   </data>
   <data name="Answer" xml:space="preserve">
-    <value></value>
+    <value>Answer</value>
   </data>
   <data name="NewTest" xml:space="preserve">
-    <value></value>
+    <value>New Test</value>
   </data>
   <data name="TestStartConfirm" xml:space="preserve">
-    <value></value>
+    <value>Do you want to start test: {0}</value>
   </data>
   <data name="ConfirmAction" xml:space="preserve">
-    <value></value>
+    <value>Confirm action</value>
   </data>
   <data name="AuthorizationError" xml:space="preserve">
-    <value></value>
+    <value>Wrong username or password</value>
   </data>
   <data name="ServerError" xml:space="preserve">
-    <value></value>
+    <value>Server error</value>
   </data>
   <data name="UserAlreadyExists" xml:space="preserve">
-    <value></value>
+    <value>User already exists</value>
   </data>
   <data name="CorrectAnswersNotAvailable" xml:space="preserve">
-    <value></value>
+    <value>The correct answers to the test will be available after passing all attempts.</value>
   </data>
   <data name="AddAnswer" xml:space="preserve">
-    <value></value>
+    <value>Add answer</value>
   </data>
   <data name="RemoveQuestion" xml:space="preserve">
-    <value></value>
+    <value>Remove question</value>
   </data>
   <data name="Test" xml:space="preserve">
-    <value></value>
+    <value>Test</value>
   </data>
   <data name="AllUsers" xml:space="preserve">
-    <value></value>
+    <value>All users</value>
   </data>
   <data name="AllowedUsers" xml:space="preserve">
-    <value></value>
+    <value>Allowed users</value>
   </data>
   <data name="Return" xml:space="preserve">
-    <value></value>
+    <value>Return</value>
   </data>
 </root>

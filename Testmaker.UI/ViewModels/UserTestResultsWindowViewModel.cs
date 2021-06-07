@@ -21,8 +21,8 @@ namespace TestMaker.UI.ViewModels
     {
         #region Private Fields
 
-        private ObservableCollection<TestResult> _testResultList;
         private readonly ITokenHandler _tokenHandler;
+        private ObservableCollection<TestResult> _testResultList;
 
         #endregion Private Fields
 
@@ -55,7 +55,6 @@ namespace TestMaker.UI.ViewModels
         /// <summary>
         /// Navigated to UserControl event
         /// </summary>
-        /// <param name="navigationContext">key=value vars</param>
         public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
             if (!(await TryGetTestResultsList()))
@@ -82,8 +81,6 @@ namespace TestMaker.UI.ViewModels
         /// <para>Show test results button event</para>
         /// if user has spelt all attemps he can see correct answers on test
         /// </summary>
-        /// <param name="testResultUI"></param>
-        /// <returns></returns>
         public async Task ShowTestResultsButtonAsync(object testResultUI)
         {
             var testResult = (testResultUI as TestResult);
