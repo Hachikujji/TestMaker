@@ -15,6 +15,7 @@ using TestMaker.Database.Entities;
 using TestMaker.Database.Models;
 using TestMaker.Stuff;
 using TestMaker.UI.Services;
+using WPFLocalizeExtension.Engine;
 
 namespace TestMaker.UI.ViewModels
 {
@@ -95,11 +96,11 @@ namespace TestMaker.UI.ViewModels
             ReturnButtonCommand = new DelegateCommand(ReturnButton);
             RemoveAnswerEnterButtonCommand = new DelegateCommand<object>(RemoveAnswerEnterButton);
             CreateTestButtonCommand = new DelegateCommand(async () => await CreateTestButton());
-            Test = new Test("New test", StaticProperties.CurrentUserResponseHeader.Username, 0, new ObservableCollection<TestQuestion>());
+            Test = new Test(LocalizationService.GetLocalizedValue<string>("NewTest"), StaticProperties.CurrentUserResponseHeader.Username, 0, new ObservableCollection<TestQuestion>());
             NumbersOfAttempts = new ObservableCollection<int>();
             for (int i = 1; i < 6; i++)
                 NumbersOfAttempts.Add(i);
-            Test.Questions.Add(new TestQuestion($"New question", new ObservableCollection<TestAnswer>()));
+            Test.Questions.Add(new TestQuestion(LocalizationService.GetLocalizedValue<string>("Question"), new ObservableCollection<TestAnswer>()));
             IsTestEditing = true;
         }
 
@@ -112,7 +113,7 @@ namespace TestMaker.UI.ViewModels
         /// </summary>
         public void AddQuestionButton()
         {
-            Test.Questions.Add(new TestQuestion($"New question", new ObservableCollection<TestAnswer>()));
+            Test.Questions.Add(new TestQuestion(LocalizationService.GetLocalizedValue<string>("Question"), new ObservableCollection<TestAnswer>()));
         }
 
         /// <summary>
@@ -122,7 +123,7 @@ namespace TestMaker.UI.ViewModels
         public void AddAnswerButton(object testQuestion)
         {
             var question = (testQuestion as TestQuestion);
-            question.Answers.Add(new TestAnswer("New answer", false));
+            question.Answers.Add(new TestAnswer(LocalizationService.GetLocalizedValue<string>("Answer"), false));
         }
 
         /// <summary>
@@ -163,29 +164,29 @@ namespace TestMaker.UI.ViewModels
         {
             if (Test.Attempts == 0)
             {
-                MessageBox.Show("Attempt count error");
+                MessageBox.Show(LocalizationService.GetLocalizedValue<string>("AttemptCountError"));
                 return;
             }
             if (string.IsNullOrWhiteSpace(Test.Name))
             {
-                MessageBox.Show("Test name error");
+                MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TestNameError"));
                 return;
             }
             if (Test.Questions.Count == 0)
             {
-                MessageBox.Show("Question count error");
+                MessageBox.Show(LocalizationService.GetLocalizedValue<string>("QuestionCountError"));
                 return;
             }
             foreach (var question in Test.Questions)
             {
                 if (string.IsNullOrWhiteSpace(question.Question))
                 {
-                    MessageBox.Show("One of question name is empty");
+                    MessageBox.Show(LocalizationService.GetLocalizedValue<string>("QuestionNameEmpty"));
                     return;
                 }
                 if (question.Answers.Count < 2)
                 {
-                    MessageBox.Show($"Answer count error in {question.Question}");
+                    MessageBox.Show(string.Format(LocalizationService.GetLocalizedValue<string>("AnswerCountError"), question.Question));
                     return;
                 }
                 int count = 0;
@@ -193,7 +194,7 @@ namespace TestMaker.UI.ViewModels
                 {
                     if (string.IsNullOrWhiteSpace(answer.Answer))
                     {
-                        MessageBox.Show($"Answer name error in {question.Question}");
+                        MessageBox.Show(string.Format(LocalizationService.GetLocalizedValue<string>("AnswerNameError"), question.Question));
                         return;
                     }
                     if (answer.IsRight)
@@ -201,7 +202,7 @@ namespace TestMaker.UI.ViewModels
                 }
                 if (count == 0)
                 {
-                    MessageBox.Show($"Right answers count error in {question.Question}");
+                    MessageBox.Show(string.Format(LocalizationService.GetLocalizedValue<string>("RightAnswerCountError"), question.Question));
                     return;
                 }
             }
@@ -218,7 +219,7 @@ namespace TestMaker.UI.ViewModels
                     }
                     else
                     {
-                        MessageBox.Show("Your token is expired.");
+                        MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                         RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                     }
                 }
@@ -236,7 +237,7 @@ namespace TestMaker.UI.ViewModels
                     }
                     else
                     {
-                        MessageBox.Show("Your token is expired.");
+                        MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                         RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                     }
                 }
@@ -265,16 +266,16 @@ namespace TestMaker.UI.ViewModels
                         }
                         else
                         {
-                            MessageBox.Show("Your token is expired.");
+                            MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                             RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                         }
                     }
             }
             else
             {
-                Test = new Test("New test", StaticProperties.CurrentUserResponseHeader.Username, 0, new ObservableCollection<TestQuestion>());
+                Test = new Test(LocalizationService.GetLocalizedValue<string>("NewTest"), StaticProperties.CurrentUserResponseHeader.Username, 0, new ObservableCollection<TestQuestion>());
                 IsTestEditing = true;
-                CreateTestButtonName = "Create Test";
+                CreateTestButtonName = LocalizationService.GetLocalizedValue<string>("CreateTest");
             }
         }
 
@@ -334,18 +335,11 @@ namespace TestMaker.UI.ViewModels
             var response = await StaticProperties.Client.PostAsync("/test/getTest", new StringContent(request, Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
-                try
-                {
-                    var testJson = await response.Content.ReadAsStringAsync();
-                    var test = JsonConvert.DeserializeObject<Test>(testJson);
-                    Test = test;
-                    IsTestEditing = false;
-                    CreateTestButtonName = "Update test";
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show($"Error when tried to get test: {e}");
-                }
+                var testJson = await response.Content.ReadAsStringAsync();
+                var test = JsonConvert.DeserializeObject<Test>(testJson);
+                Test = test;
+                IsTestEditing = false;
+                CreateTestButtonName = LocalizationService.GetLocalizedValue<string>("UpdateTest");
                 return true;
             }
             else

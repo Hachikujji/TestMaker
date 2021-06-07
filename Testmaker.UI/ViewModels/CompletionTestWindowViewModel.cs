@@ -32,7 +32,7 @@ namespace TestMaker.UI.ViewModels
 
         public CompletionTestWindowViewModel(IRegionManager regionManager, ITokenHandler tokenHandler) : base(regionManager)
         {
-            SendTestResultButtonEvent = new DelegateCommand(async () => await SendTestResultButton());
+            SendTestResultButtonCommand = new DelegateCommand(async () => await SendTestResultButton());
             _tokenHandler = tokenHandler;
         }
 
@@ -46,7 +46,7 @@ namespace TestMaker.UI.ViewModels
             set { SetProperty(ref _test, value); }
         }
 
-        public DelegateCommand SendTestResultButtonEvent { get; }
+        public DelegateCommand SendTestResultButtonCommand { get; }
 
         #endregion Public Properties
 
@@ -59,29 +59,21 @@ namespace TestMaker.UI.ViewModels
         public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
             int testId = 0;
-            if (navigationContext.Parameters.Count != 0)
-            {
-                string TestIdString = navigationContext.Parameters["TestId"].ToString();
-                if (!string.IsNullOrWhiteSpace(TestIdString))
-                    if (int.TryParse(TestIdString, out testId))
-                        if (!await TryGetTest(testId))
+            string TestIdString = navigationContext.Parameters["TestId"].ToString();
+            if (!string.IsNullOrWhiteSpace(TestIdString))
+                if (int.TryParse(TestIdString, out testId))
+                    if (!await TryGetTest(testId))
+                    {
+                        if (await _tokenHandler.TryRefreshTokenAsync())
                         {
-                            if (await _tokenHandler.TryRefreshTokenAsync())
-                            {
-                                await TryGetTest(testId);
-                            }
-                            else
-                            {
-                                MessageBox.Show("Your token is expired.");
-                                RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
-                            }
+                            await TryGetTest(testId);
                         }
-            }
-            else
-            {
-                MessageBox.Show($"Error when tried to get test.");
-                RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
-            }
+                        else
+                        {
+                            MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
+                            RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
+                        }
+                    }
         }
 
         #endregion Public Methods
@@ -98,17 +90,10 @@ namespace TestMaker.UI.ViewModels
             var response = await StaticProperties.Client.PostAsync("/test/getTest", new StringContent(request, Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
-                try
-                {
-                    var testJson = await response.Content.ReadAsStringAsync();
-                    var test = JsonConvert.DeserializeObject<Test>(testJson);
-                    if (test != null)
-                        Test = new TestResult(test);
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show($"Error when tried to get test: {e}");
-                }
+                var testJson = await response.Content.ReadAsStringAsync();
+                var test = JsonConvert.DeserializeObject<Test>(testJson);
+                if (test != null)
+                    Test = new TestResult(test);
                 return true;
             }
             else
@@ -147,7 +132,7 @@ namespace TestMaker.UI.ViewModels
                 }
                 else
                 {
-                    MessageBox.Show("Your token is expired.");
+                    MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                 }
             }

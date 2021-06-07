@@ -102,24 +102,13 @@ namespace TestMaker.UI.ViewModels
                 RegionManager.RequestNavigate(StaticProperties.ContentRegion, path);
             else
             {
-                string json = null;
-                try
-                {
-                    json = JsonConvert.SerializeObject(StaticProperties.CurrentUserResponseHeader);
-                }
-                catch (Newtonsoft.Json.JsonReaderException e)
-                {
-                    MessageBox.Show($"Error when tried to convert user responce header: {e}");
-                    return;
-                }
-
+                var json = JsonConvert.SerializeObject(StaticProperties.CurrentUserResponseHeader);
                 response = await StaticProperties.Client.PostAsync("user/refreshToken", new StringContent(json, Encoding.UTF8, "application/json"));
                 if (response.IsSuccessStatusCode)
                 {
                     var userResponce = JsonConvert.DeserializeObject<UserAuthenticationResponse>(await response.Content.ReadAsStringAsync());
                     StaticProperties.CurrentUserResponseHeader = userResponce;
-                    StaticProperties.Client.DefaultRequestHeaders.Remove("Authorization");
-                    StaticProperties.Client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", await response.Content.ReadAsStringAsync());
+                    StaticProperties.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userResponce.JwtToken);
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, path);
                 }
                 else

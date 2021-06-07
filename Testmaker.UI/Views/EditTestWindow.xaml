@@ -4,11 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:lex="http://wpflocalizeextension.codeplex.com"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     d:DesignHeight="500"
     d:DesignWidth="500"
+    lex:LocalizeDictionary.DesignCulture="ru"
+    lex:ResxLocalizationProvider.DefaultAssembly="TestMaker.UI"
+    lex:ResxLocalizationProvider.DefaultDictionary="language"
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -142,12 +146,12 @@
                                         Background="OrangeRed"
                                         Command="{Binding DataContext.RemoveQuestionButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                         CommandParameter="{Binding}"
-                                        Content="Remove question" />
+                                        Content="{lex:Loc RemoveQuestion}" />
                                     <Button
                                         Grid.Row="3"
                                         Command="{Binding DataContext.AddAnswerButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                         CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}"
-                                        Content="Add answer" />
+                                        Content="{lex:Loc AddAnswer}" />
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -197,7 +201,7 @@
                                 </Grid>
                                 <Label
                                     HorizontalContentAlignment="Center"
-                                    Content="Test name "
+                                    Content="{lex:Loc TestName}"
                                     FontSize="15" />
                                 <TextBox
                                     Margin="10"
@@ -213,7 +217,7 @@
                             <StackPanel>
                                 <Label
                                     HorizontalContentAlignment="Center"
-                                    Content="Attempts "
+                                    Content="{lex:Loc Attempts}"
                                     FontSize="15" />
                                 <ComboBox
                                     Margin="10"
@@ -231,7 +235,7 @@
         <Button
             Grid.Row="1"
             Command="{Binding DataContext.AddQuestionButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-            Content="Add question" />
+            Content="{lex:Loc AddQuestion}" />
         <Button
             Grid.Row="2"
             Background="LightGreen"

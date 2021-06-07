@@ -148,7 +148,8 @@ namespace TestMaker.UI.ViewModels
                     }
                     else
                     {
-                        MessageBox.Show("Your token is expired.");
+                        MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
+                        RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                     }
                 }
             }
@@ -168,7 +169,7 @@ namespace TestMaker.UI.ViewModels
                 }
                 else
                 {
-                    MessageBox.Show("Your token is expired.");
+                    MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                 }
             }
@@ -193,7 +194,7 @@ namespace TestMaker.UI.ViewModels
                     }
                     else
                     {
-                        MessageBox.Show("Your token is expired.");
+                        MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                         RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                     }
                 }
@@ -219,7 +220,7 @@ namespace TestMaker.UI.ViewModels
                     }
                     else
                     {
-                        MessageBox.Show("Your token is expired.");
+                        MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                         RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                     }
                 }
@@ -287,7 +288,7 @@ namespace TestMaker.UI.ViewModels
                 }
                 else
                 {
-                    MessageBox.Show("Your token is expired.");
+                    MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                 }
             }

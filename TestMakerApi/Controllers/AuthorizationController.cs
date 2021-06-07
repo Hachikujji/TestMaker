@@ -11,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TestMaker.Database;
 using TestMaker.Database.Entities;
@@ -62,9 +63,9 @@ namespace TestMakerApi.Controllers
                 else
                     return BadRequest("Invalid username or password.");
             }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
+            catch (Exception)
             {
-                return NotFound($"Database error: {e}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -82,40 +83,15 @@ namespace TestMakerApi.Controllers
                 user = await _databaseService.GetUserAsync(model.Username, model.Password);
                 if (user == null)
                     return BadRequest("Invalid username or password.");
-                var jwtToken = _tokenHandlerService.CreateJwtToken();
+                var jwtToken = _tokenHandlerService.CreateJwtToken(user.Id, user.Username);
                 var refreshToken = _tokenHandlerService.CreateRefreshToken();
                 await _databaseService.UpdateUserRefreshTokenAsync(user, refreshToken);
                 return Ok(new UserAuthenticationResponse(user, jwtToken, refreshToken.Token));
             }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
+            catch (Exception)
             {
-                return StatusCode(500);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
-        }
-
-        /// <summary>
-        /// Validates JWT token
-        /// </summary>
-        /// <param name="Authorization">Authorization class in header</param>
-        /// <returns></returns>
-        [HttpGet("/user/validateToken")]
-        public ActionResult ValidateToken([FromHeader] string Authorization)
-        {
-            if (string.IsNullOrWhiteSpace(Authorization))
-                return BadRequest("Token not provided");
-            UserAuthorizationRequest userHeader;
-            try
-            {
-                userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
-            }
-            catch (Newtonsoft.Json.JsonReaderException e)
-            {
-                return BadRequest($"Wrong authorization header: {e}");
-            }
-
-            if (userHeader == null || !_tokenHandlerService.ValidateToken(userHeader.JwtToken))
-                return Unauthorized("Token is not valid");
-            return Ok("Token is valid");
         }
 
         /// <summary>
@@ -126,10 +102,21 @@ namespace TestMakerApi.Controllers
         [HttpGet("/user/isUserExists/{username}")]
         public async Task<ActionResult<bool>> IsUserExists(string username)
         {
-            var isUserExists = await _databaseService.IsUserExistsAsync(username);
-            return Ok(isUserExists);
+            try
+            {
+                var isUserExists = await _databaseService.IsUserExistsAsync(username);
+                return Ok(isUserExists);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
+        /// <summary>
+        /// Refresh JWT token of user
+        /// </summary>
+        /// <param name="response"></param>
         [HttpPost("/user/refreshToken")]
         public async Task<ActionResult<UserAuthenticationResponse>> RefreshToken(UserAuthenticationResponse response)
         {
@@ -138,37 +125,34 @@ namespace TestMakerApi.Controllers
                 var user = await _databaseService.GetUserAsync(response.Id);
                 if (response.RefreshToken.Equals(user.RefreshToken.Token) && !user.RefreshToken.IsExpired)
                 {
-                    Debug.WriteLine($"User {response.Username} refreshing JWT token");
                     return await Authorization(new UserAuthenticationRequest(user.Username, user.Password));
                 }
                 else
                     return Unauthorized("JWT token expired");
             }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
+            catch (Exception)
             {
-                return NotFound($"Database error: {e}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
+        /// <summary>
+        /// Get string list of usernames
+        /// </summary>
+        /// <returns>List<string></returns>
         [HttpGet("/user/getUsernames")]
-        public async Task<ActionResult<IList<string>>> GetUsernames([FromHeader] string Authorization)
+        [Authorize]
+        public async Task<ActionResult<IList<string>>> GetUsernames()
         {
-            UserAuthorizationRequest _userHeader;
             try
             {
-                _userHeader = JsonConvert.DeserializeObject<UserAuthorizationRequest>(Authorization);
-                if (!_tokenHandlerService.ValidateToken(_userHeader.JwtToken))
-                    return Unauthorized("Token error");
+                var username = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
                 var list = await _databaseService.GetUsernamesAsync();
                 return Ok(list);
             }
-            catch (Newtonsoft.Json.JsonReaderException e)
+            catch (Exception)
             {
-                return BadRequest($"Token error: {e}");
-            }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
-            {
-                return NotFound($"Database error: {e}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 

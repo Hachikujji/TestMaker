@@ -3,6 +3,7 @@ using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using TestMaker.Database.Models;
@@ -13,19 +14,6 @@ namespace TestMaker.UI.Services
 {
     public class TokenHandler : ITokenHandler
     {
-        /// <summary>
-        /// Is JWT token valid request async
-        /// </summary>
-        /// <returns>true if request is success,else returns false</returns>
-        public async Task<bool> IsJwtTokenValidAsync()
-        {
-            HttpResponseMessage response = await StaticProperties.Client.GetAsync("user/validateToken");
-            if (response.IsSuccessStatusCode)
-                return true;
-            else
-                return false;
-        }
-
         /// <summary>
         /// try update JWT token async
         /// </summary>
@@ -38,8 +26,7 @@ namespace TestMaker.UI.Services
             {
                 var userResponce = JsonConvert.DeserializeObject<UserAuthenticationResponse>(await response.Content.ReadAsStringAsync());
                 StaticProperties.CurrentUserResponseHeader = userResponce;
-                StaticProperties.Client.DefaultRequestHeaders.Remove("Authorization");
-                StaticProperties.Client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", await response.Content.ReadAsStringAsync());
+                StaticProperties.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", StaticProperties.CurrentUserResponseHeader.JwtToken);
                 return true;
             }
             else

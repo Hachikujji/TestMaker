@@ -63,7 +63,13 @@ namespace TestMakerApi
             // services
             services.AddScoped<DatabaseContext>();
             services.AddScoped<IDatabaseService, DatabaseService>();
-            services.AddSingleton<ITokenHandlerService, TokenHandlerService>();
+            services.AddScoped<ITokenHandlerService, TokenHandlerService>();
+            var tokenHandler = services.BuildServiceProvider().GetRequiredService<ITokenHandlerService>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(cfg =>
+            {
+                cfg.TokenValidationParameters = tokenHandler.GetTokenValidationParameters();
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -74,6 +80,8 @@ namespace TestMakerApi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestMakerApi v1"));
             }
+
+            app.UseAuthentication();
 
             app.UseHttpsRedirection();
 

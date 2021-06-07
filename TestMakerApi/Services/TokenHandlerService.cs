@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,12 +56,17 @@ namespace TestMakerApi.Services
         /// Creates jwt token
         /// </summary>
         /// <returns>string - JWT token</returns>
-        public string CreateJwtToken()
+        public string CreateJwtToken(int userId, string username)
         {
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
                     issuer: Issuer,
                     audience: Audience,
+                    claims: new Claim[]
+                    {
+                        new Claim(ClaimTypes.NameIdentifier,userId.ToString()),
+                        new Claim(ClaimTypes.Name,username),
+                    },
                     notBefore: now,
                     expires: now.Add(TimeSpan.FromMinutes(Lifetime)),
                     signingCredentials: new SigningCredentials(GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));

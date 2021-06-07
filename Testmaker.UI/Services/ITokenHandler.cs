@@ -8,7 +8,5 @@ namespace TestMaker.UI.Services
     public interface ITokenHandler
     {
         public Task<bool> TryRefreshTokenAsync();
-
-        public Task<bool> IsJwtTokenValidAsync();
     }
 }

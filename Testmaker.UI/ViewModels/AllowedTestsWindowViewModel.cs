@@ -61,7 +61,7 @@ namespace TestMaker.UI.ViewModels
                     await TryGetAllowedTestList();
                 else
                 {
-                    MessageBox.Show("Your token is expired.");
+                    MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                 }
             }
@@ -85,7 +85,7 @@ namespace TestMaker.UI.ViewModels
             NavigationParameters navigationParameters = null;
             if (test != null)
             {
-                MessageBoxResult dialogResult = MessageBox.Show($"Do you want to start test: {test.Name}", "Confirm action", MessageBoxButton.YesNo);
+                MessageBoxResult dialogResult = MessageBox.Show(string.Format(LocalizationService.GetLocalizedValue<string>("TestStartConfirm"), test.Name), LocalizationService.GetLocalizedValue<string>("ConfirmAction"), MessageBoxButton.YesNo);
                 if (dialogResult == MessageBoxResult.Yes)
                 {
                     navigationParameters = new NavigationParameters();

@@ -13,7 +13,7 @@ namespace TestMakerApi.Services
 
         public SymmetricSecurityKey GetSymmetricSecurityKey();
 
-        public string CreateJwtToken();
+        public string CreateJwtToken(int userId, string username);
 
         public RefreshToken CreateRefreshToken();
 

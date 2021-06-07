@@ -7,10 +7,30 @@
 	<ItemGroup>
 		<PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
 		<PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
+		<PackageReference Include="WPFLocalizeExtension" Version="3.8.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\TestMaker.Database\TestMaker.Database.csproj" />
 		<ProjectReference Include="..\TestMaker.Stuff\TestMaker.Stuff.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Resources\language.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>language.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\language.en-US.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\language.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>language.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\language.ru-RU.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
 		<Page Update="Views\AuthorizationWindow.xaml">

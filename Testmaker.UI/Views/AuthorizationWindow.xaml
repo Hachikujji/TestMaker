@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:lex="http://wpflocalizeextension.codeplex.com"
     xmlns:local="clr-namespace:TestMaker.UI.Views"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,6 +12,9 @@
     xmlns:resources="clr-namespace:TestMaker.UI.Resources"
     xmlns:services="clr-namespace:TestMaker.UI.Services"
     d:Background="White"
+    lex:LocalizeDictionary.DesignCulture="ru"
+    lex:ResxLocalizationProvider.DefaultAssembly="TestMaker.UI"
+    lex:ResxLocalizationProvider.DefaultDictionary="language"
     prism:ViewModelLocator.AutoWireViewModel="True"
     FontFamily="{materialDesign:MaterialDesignFont}"
     TextElement.FontSize="16"
@@ -18,8 +22,28 @@
     mc:Ignorable="d">
 
     <!--  d:DesignHeight="300" d:DesignWidth="300"  -->
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid>
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <ComboBox
+            Width="120"
+            Height="26"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            ItemsSource="{Binding Languages}"
+            SelectedIndex="1"
+            SelectedItem="{Binding SelectedLanguage}"
+            Style="{DynamicResource MaterialDesignComboBox}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding LanguageChangedCommand}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Key}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -36,7 +60,7 @@
                     Height="30"
                     Margin="0,0,10,0"
                     HorizontalAlignment="right"
-                    Content="Username:" />
+                    Content="{lex:Loc Username}" />
                 <TextBox
                     Grid.Column="1"
                     Background="Gainsboro"
@@ -52,7 +76,7 @@
                     Height="30"
                     Margin="0,0,10,0"
                     HorizontalAlignment="right"
-                    Content="Password:" />
+                    Content="{lex:Loc Password}" />
                 <PasswordBox
                     x:Name="Passwordbox"
                     Grid.Column="1"
@@ -74,14 +98,14 @@
                     Margin="0,5,20,0"
                     Command="{Binding LoginButtonCommand}"
                     CommandParameter="{Binding SecurePassword, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, ElementName=Passwordbox}"
-                    Content="Login"
+                    Content="{lex:Loc Login}"
                     Style="{DynamicResource MaterialDesignFlatMidBgButton}" />
                 <Button
                     Grid.Column="1"
                     Margin="20,5,0,0"
                     Command="{Binding RegistrationButtonCommand}"
                     CommandParameter="{Binding Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=Passwordbox}"
-                    Content="Registration"
+                    Content="{lex:Loc Registration}"
                     Style="{DynamicResource MaterialDesignFlatMidBgButton}" />
             </Grid>
             <TextBlock

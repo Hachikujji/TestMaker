@@ -58,28 +58,20 @@ namespace TestMaker.UI.ViewModels
         {
             TestResult = null;
             int testId = 0;
-            if (navigationContext.Parameters.Count != 0)
-            {
-                string TestResultIdString = navigationContext.Parameters["TestResultId"].ToString();
-                if (!string.IsNullOrWhiteSpace(TestResultIdString) && int.TryParse(TestResultIdString, out testId))
-                    if (!await TryGetTestResult(testId))
+            string TestResultIdString = navigationContext.Parameters["TestResultId"].ToString();
+            if (!string.IsNullOrWhiteSpace(TestResultIdString) && int.TryParse(TestResultIdString, out testId))
+                if (!await TryGetTestResult(testId))
+                {
+                    if (await _tokenHandler.TryRefreshTokenAsync())
                     {
-                        if (await _tokenHandler.TryRefreshTokenAsync())
-                        {
-                            await TryGetTestResult(testId);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Your token is expired.");
-                            RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
-                        }
+                        await TryGetTestResult(testId);
                     }
-            }
-            else
-            {
-                MessageBox.Show($"Test result id not provided.");
-                RegionManager.RequestNavigate(StaticProperties.ContentRegion, "MenuHubWindow");
-            }
+                    else
+                    {
+                        MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
+                        RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
+                    }
+                }
         }
 
         /// <summary>
@@ -104,17 +96,10 @@ namespace TestMaker.UI.ViewModels
             var response = await StaticProperties.Client.PostAsync("/test/getTestResult", new StringContent(request, Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
-                try
-                {
-                    var testJson = await response.Content.ReadAsStringAsync();
-                    var test = JsonConvert.DeserializeObject<TestResult>(testJson);
-                    if (test != null)
-                        TestResult = test;
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show($"Error when tried to get test: {e}");
-                }
+                var testJson = await response.Content.ReadAsStringAsync();
+                var test = JsonConvert.DeserializeObject<TestResult>(testJson);
+                if (test != null)
+                    TestResult = test;
                 return true;
             }
             else

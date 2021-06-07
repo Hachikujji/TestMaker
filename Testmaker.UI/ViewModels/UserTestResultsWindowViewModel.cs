@@ -64,7 +64,7 @@ namespace TestMaker.UI.ViewModels
                     await TryGetTestResultsList();
                 else
                 {
-                    MessageBox.Show("Your token is expired.");
+                    MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                 }
             }
@@ -93,7 +93,7 @@ namespace TestMaker.UI.ViewModels
                     await TryGetIsUserCanCheckTestResult(testResult);
                 else
                 {
-                    MessageBox.Show("Your token is expired.");
+                    MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                 }
             }
@@ -138,7 +138,7 @@ namespace TestMaker.UI.ViewModels
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, "PreviewRightTestAnswersWindow", navigationParameters);
                 }
                 else
-                    MessageBox.Show("The correct answers to the test will be available after passing all attempts.");
+                    MessageBox.Show(LocalizationService.GetLocalizedValue<string>("CorrectAnswersNotAvailable"));
                 return true;
             }
             else
