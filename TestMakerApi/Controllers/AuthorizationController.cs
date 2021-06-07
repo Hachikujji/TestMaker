@@ -16,7 +16,6 @@ using System.Threading.Tasks;
 using TestMaker.Database;
 using TestMaker.Database.Entities;
 using TestMaker.Database.Models;
-using TestMaker.Database.Services;
 using TestMakerApi.Services;
 
 namespace TestMakerApi.Controllers
@@ -27,16 +26,16 @@ namespace TestMakerApi.Controllers
     {
         #region Private Fields
 
-        private readonly IDatabaseService _databaseService;
+        private readonly IAuthorizationControllerService _autorizationControllerService;
         private readonly ITokenHandlerService _tokenHandlerService;
 
         #endregion Private Fields
 
         #region Public Constructors
 
-        public AuthorizationController(IDatabaseService databaseService, ITokenHandlerService tokenHandlerService)
+        public AuthorizationController(IAuthorizationControllerService authorizationControllerService, ITokenHandlerService tokenHandlerService)
         {
-            _databaseService = databaseService;
+            _autorizationControllerService = authorizationControllerService;
             _tokenHandlerService = tokenHandlerService;
         }
 
@@ -54,9 +53,9 @@ namespace TestMakerApi.Controllers
             var user = new User(userInfo.Username, userInfo.Password);
             try
             {
-                if (!string.IsNullOrWhiteSpace(userInfo.Username) && !string.IsNullOrWhiteSpace(userInfo.Password) && !(await _databaseService.IsUserExistsAsync(userInfo.Username)))
+                if (!string.IsNullOrWhiteSpace(userInfo.Username) && !string.IsNullOrWhiteSpace(userInfo.Password) && !(await _autorizationControllerService.IsUserExistsAsync(userInfo.Username)))
                 {
-                    await _databaseService.AddUserAsync(user);
+                    await _autorizationControllerService.AddUserAsync(user);
                     return Ok(user);
                 }
                 else
@@ -78,12 +77,12 @@ namespace TestMakerApi.Controllers
             User user;
             try
             {
-                user = await _databaseService.GetUserAsync(model.Username, model.Password);
+                user = await _autorizationControllerService.GetUserAsync(model.Username, model.Password);
                 if (user == null)
                     return BadRequest("Invalid username or password.");
                 var jwtToken = _tokenHandlerService.CreateJwtToken(user.Id, user.Username);
                 var refreshToken = _tokenHandlerService.CreateRefreshToken();
-                await _databaseService.UpdateUserRefreshTokenAsync(user, refreshToken);
+                await _autorizationControllerService.UpdateUserRefreshTokenAsync(user, refreshToken);
                 return Ok(new UserAuthenticationResponse(user, jwtToken, refreshToken.Token));
             }
             catch (Exception)
@@ -101,7 +100,7 @@ namespace TestMakerApi.Controllers
         {
             try
             {
-                var isUserExists = await _databaseService.IsUserExistsAsync(username);
+                var isUserExists = await _autorizationControllerService.IsUserExistsAsync(username);
                 return Ok(isUserExists);
             }
             catch (Exception)
@@ -119,7 +118,7 @@ namespace TestMakerApi.Controllers
         {
             try
             {
-                var user = await _databaseService.GetUserAsync(response.Id);
+                var user = await _autorizationControllerService.GetUserByIdAsync(response.Id);
                 if (response.RefreshToken.Equals(user.RefreshToken.Token) && !user.RefreshToken.IsExpired)
                 {
                     return await Authorization(new UserAuthenticationRequest(user.Username, user.Password));
@@ -143,7 +142,7 @@ namespace TestMakerApi.Controllers
             try
             {
                 var username = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
-                var list = await _databaseService.GetUsernamesAsync();
+                var list = await _autorizationControllerService.GetUsernamesAsync();
                 return Ok(list);
             }
             catch (Exception)

@@ -44,16 +44,16 @@ namespace TestMaker.Database.Services
 
         public Task<bool> IsTestExistsAsync(int id);
 
-        public Task<IList<Test>> GetAllowedTestList(string username);
+        public Task<IList<Test>> GetAllowedTestListAsync(string username);
 
         public Task AddTestResultAsync(TestResult test, string username);
 
-        public Task<IList<TestResult>> GetUserBestTestResultsList(string username);
+        public Task<IList<TestResult>> GetUserBestTestResultsListAsync(string username);
 
-        public Task<IList<TestResult>> GetBestTestResultsList(int testId);
+        public Task<IList<TestResult>> GetBestTestResultsListAsync(int testId);
 
         public Task<TestResult> GetTestResultAsync(int testResultId);
 
-        public Task<bool> IsUserCanCheckTestResult(int testId, string username);
+        public Task<bool> IsUserCanCheckTestResultAsync(int testId, string username);
     }
 }

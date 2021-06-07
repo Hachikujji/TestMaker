@@ -64,6 +64,8 @@ namespace TestMakerApi
             services.AddScoped<DatabaseContext>();
             services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddScoped<ITokenHandlerService, TokenHandlerService>();
+            services.AddScoped<IAuthorizationControllerService, AuthorizationControllerService>();
+            services.AddScoped<ITestControllerService, TestControllerService>();
 #pragma warning disable ASP0000
             var tokenHandler = services.BuildServiceProvider().GetRequiredService<ITokenHandlerService>();
 #pragma warning restore ASP0000

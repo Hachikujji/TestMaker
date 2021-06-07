@@ -303,7 +303,7 @@ namespace TestMaker.UI.ViewModels
         private async Task<bool> TryAddAllowedUser(string username, Test test)
         {
             var request = JsonConvert.SerializeObject(new AddTestAccessRequest(username, test));
-            var response = await StaticProperties.Client.PostAsync("/test/addTaskAllowedUser/", new StringContent(request, Encoding.UTF8, "application/json"));
+            var response = await StaticProperties.Client.PostAsync("/test/addTestAllowedUser/", new StringContent(request, Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
                 AllowedUsers.Add(username);
@@ -321,7 +321,7 @@ namespace TestMaker.UI.ViewModels
         private async Task<bool> TryDeleteAllowedUser(string username, Test test)
         {
             var request = JsonConvert.SerializeObject(new AddTestAccessRequest(username, test));
-            var response = await StaticProperties.Client.PostAsync("/test/deleteTaskAllowedUser/", new StringContent(request, Encoding.UTF8, "application/json"));
+            var response = await StaticProperties.Client.PostAsync("/test/deleteTestAllowedUser/", new StringContent(request, Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
                 UpdateFilteredAllowedUserList(AllowedUsersFilter);

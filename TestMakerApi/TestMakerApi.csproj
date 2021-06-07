@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TestMaker.Database\TestMaker.Database.csproj" />
+    <ProjectReference Include="..\TestMakerApi.Services\TestMakerApi.Services.csproj" />
   </ItemGroup>
 
 </Project>

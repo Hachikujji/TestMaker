@@ -10,7 +10,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using TestMaker.Database.Entities;
 using TestMaker.Database.Models;
-using TestMaker.Database.Services;
 using TestMakerApi.Services;
 
 namespace TestMakerApi.Controllers
@@ -21,15 +20,15 @@ namespace TestMakerApi.Controllers
     {
         #region Private Fields
 
-        private readonly IDatabaseService _databaseService;
+        private readonly ITestControllerService _testControllerService;
 
         #endregion Private Fields
 
         #region Public Constructors
 
-        public TestController(IDatabaseService databaseService)
+        public TestController(ITestControllerService testControllerService)
         {
-            _databaseService = databaseService;
+            _testControllerService = testControllerService;
         }
 
         #endregion Public Constructors
@@ -46,9 +45,9 @@ namespace TestMakerApi.Controllers
         {
             try
             {
-                if (IsTestValid(ref test))
+                if (_testControllerService.IsTestValid(ref test))
                 {
-                    await _databaseService.AddTestAsync(test);
+                    await _testControllerService.AddTestAsync(test);
                     return Ok();
                 }
                 else
@@ -70,7 +69,7 @@ namespace TestMakerApi.Controllers
             try
             {
                 var username = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
-                var list = await _databaseService.GetTestListAsync(username);
+                var list = await _testControllerService.GetTestListAsync(username);
                 return Ok(list);
             }
             catch (Exception)
@@ -89,7 +88,7 @@ namespace TestMakerApi.Controllers
         {
             try
             {
-                var test = await _databaseService.GetTestAsync(testId);
+                var test = await _testControllerService.GetTestAsync(testId);
                 return Ok(test);
             }
             catch (Exception)
@@ -108,7 +107,7 @@ namespace TestMakerApi.Controllers
         {
             try
             {
-                await _databaseService.DeleteTestAsync(test);
+                await _testControllerService.DeleteTestAsync(test);
                 return Ok("Deleted");
             }
             catch (Exception)
@@ -127,7 +126,7 @@ namespace TestMakerApi.Controllers
         {
             try
             {
-                var users = await _databaseService.GetTestAllowedUsersAsync(test);
+                var users = await _testControllerService.GetAllowedUsersAsync(test);
                 return Ok(users);
             }
             catch (Exception)
@@ -140,13 +139,13 @@ namespace TestMakerApi.Controllers
         /// Allow the user to take the test
         /// </summary>
         /// <param name="testAccessRequest">Username and Test</param>
-        [HttpPost("/test/addTaskAllowedUser")]
+        [HttpPost("/test/addTestAllowedUser")]
         [Authorize]
-        public async Task<ActionResult<IList<string>>> AddTaskAllowedUser(AddTestAccessRequest testAccessRequest)
+        public async Task<ActionResult> AddTestAllowedUser(AddTestAccessRequest testAccessRequest)
         {
             try
             {
-                await _databaseService.AddTestAllowedUserAsync(testAccessRequest.Test, testAccessRequest.Username);
+                await _testControllerService.AddTestAllowedUserAsync(testAccessRequest.Test, testAccessRequest.Username);
                 return Ok("Added");
             }
             catch (Exception)
@@ -159,13 +158,13 @@ namespace TestMakerApi.Controllers
         /// Prevent the user from taking the test
         /// </summary>
         /// <param name="testAccessRequest"> Username and Test</param>
-        [HttpPost("/test/deleteTaskAllowedUser")]
+        [HttpPost("/test/deleteTestAllowedUser")]
         [Authorize]
-        public async Task<ActionResult<IList<string>>> DeleteTaskAllowedUser(AddTestAccessRequest testAccessRequest)
+        public async Task<ActionResult<IList<string>>> DeleteTestAllowedUser(AddTestAccessRequest testAccessRequest)
         {
             try
             {
-                await _databaseService.DeleteTestAllowedUserAsync(testAccessRequest.Test, testAccessRequest.Username);
+                await _testControllerService.DeleteTestAllowedUserAsync(testAccessRequest.Test, testAccessRequest.Username);
                 return Ok("Deleted");
             }
             catch (Exception)
@@ -184,7 +183,7 @@ namespace TestMakerApi.Controllers
         {
             try
             {
-                await _databaseService.UpdateTestAsync(test);
+                await _testControllerService.UpdateTestAsync(test);
                 return Ok("Updated");
             }
             catch (Exception)
@@ -203,7 +202,7 @@ namespace TestMakerApi.Controllers
             try
             {
                 var username = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
-                var testList = await _databaseService.GetAllowedTestList(username);
+                var testList = await _testControllerService.GetAllowedTestListAsync(username);
                 return Ok(testList);
             }
             catch (Exception)
@@ -223,7 +222,7 @@ namespace TestMakerApi.Controllers
             try
             {
                 var username = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
-                var list = await _databaseService.GetUserBestTestResultsList(username);
+                var list = await _testControllerService.GetUserTestResultListAsync(username);
                 return Ok(list);
             }
             catch (Exception)
@@ -242,7 +241,7 @@ namespace TestMakerApi.Controllers
         {
             try
             {
-                var list = await _databaseService.GetBestTestResultsList(testId);
+                var list = await _testControllerService.GetTestResultListAsync(testId);
                 return Ok(list);
             }
             catch (Exception)
@@ -262,8 +261,7 @@ namespace TestMakerApi.Controllers
             try
             {
                 var username = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
-                CalculateTestResult(ref testResult);
-                await _databaseService.AddTestResultAsync(testResult, username);
+                await _testControllerService.AddTestResultAsync(testResult, username);
                 return Ok("Added");
             }
             catch (Exception)
@@ -283,7 +281,7 @@ namespace TestMakerApi.Controllers
         {
             try
             {
-                var testResult = await _databaseService.GetTestResultAsync(testResultId);
+                var testResult = await _testControllerService.GetTestResultAsync(testResultId);
                 return Ok(testResult);
             }
             catch (Exception)
@@ -304,8 +302,8 @@ namespace TestMakerApi.Controllers
             try
             {
                 var username = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
-                var testResult = await _databaseService.IsUserCanCheckTestResult(testId, username);
-                return Ok(testResult);
+                var isCanCheck = await _testControllerService.IsUserCanCheckTestResultAsync(testId, username);
+                return Ok(isCanCheck);
             }
             catch (Exception)
             {
@@ -314,55 +312,5 @@ namespace TestMakerApi.Controllers
         }
 
         #endregion Public Methods
-
-        #region Private Methods
-
-        /// <summary>
-        /// Validate test
-        /// </summary>
-        /// <param name="test">Test</param>
-        private bool IsTestValid(ref Test test)
-        {
-            if (test.Attempts == 0 || test.Questions.Count == 0 || string.IsNullOrWhiteSpace(test.Name))
-                return false;
-            foreach (var question in test.Questions)
-            {
-                if (string.IsNullOrWhiteSpace(question.Question) || question.Answers.Count < 2)
-                    return false;
-                int count = 0;
-                foreach (var answer in question.Answers)
-                {
-                    if (string.IsNullOrWhiteSpace(answer.Answer))
-                        return false;
-                    if (answer.IsRight)
-                        count++;
-                }
-                if (count == 0)
-                    return false;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// calculate result of test results
-        /// </summary>
-        private void CalculateTestResult(ref TestResult testResult)
-        {
-            int count;
-            foreach (var question in testResult.Questions)
-            {
-                count = 0;
-                foreach (var answer in question.Answers)
-                {
-                    if (answer.IsRight == answer.IsSelected)
-                        count++;
-                }
-                if (count == question.Answers.Count)
-                    testResult.Result++;
-            }
-            testResult.Result *= (float)100 / testResult.Questions.Count;
-        }
-
-        #endregion Private Methods
     }
 }

@@ -297,7 +297,7 @@ namespace TestMaker.Database.Services
         /// </summary>
         /// <param name="username">username</param>
         /// <returns>list of tests</returns>
-        public async Task<IList<Test>> GetAllowedTestList(string username)
+        public async Task<IList<Test>> GetAllowedTestListAsync(string username)
         {
             var testList = await _dbContext.Test.Where(t => _dbContext.TestAccess.Any(ta => ta.Test.Id == t.Id && ta.User.Username == username)).Include(t => ((Test)t).Questions).ThenInclude(q => ((TestQuestion)q).Answers).ToListAsync();
             int testCount;
@@ -338,7 +338,7 @@ namespace TestMaker.Database.Services
         /// </summary>
         /// <param name="username">Username</param>
         /// <returns>List of test results</returns>
-        public async Task<IList<TestResult>> GetUserBestTestResultsList(string username)
+        public async Task<IList<TestResult>> GetUserBestTestResultsListAsync(string username)
         {
             var listOfResults = await _dbContext.TestResult.Where(tr => tr.User.Username == username).Include(tr => tr.Test).ToListAsync();
             List<TestResult> listofBestResults = new List<TestResult>(listOfResults.GroupBy(mr => mr.Test).Select(grp => grp.OrderByDescending(mr => mr.Result).First()));
@@ -350,7 +350,7 @@ namespace TestMaker.Database.Services
         /// </summary>
         /// <param name="testId">test id</param>
         /// <returns>list of test results</returns>
-        public async Task<IList<TestResult>> GetBestTestResultsList(int testId)
+        public async Task<IList<TestResult>> GetBestTestResultsListAsync(int testId)
         {
             var listOfResults = await _dbContext.TestResult.Where(tr => tr.Test.Id == testId).Include(tr => tr.User).ToListAsync();
             List<TestResult> listofBestResults = new List<TestResult>(listOfResults.GroupBy(mr => mr.User).Select(grp => grp.OrderByDescending(mr => mr.Result).First()));
@@ -374,7 +374,7 @@ namespace TestMaker.Database.Services
         /// <param name="testId">Test id</param>
         /// <param name="username">username</param>
         /// <returns>true if user can check, else returns false</returns>
-        public async Task<bool> IsUserCanCheckTestResult(int testId, string username)
+        public async Task<bool> IsUserCanCheckTestResultAsync(int testId, string username)
         {
             var testResultCount = await _dbContext.TestResult.Where(tr => tr.Test.Id == testId && tr.User.Username == username).CountAsync();
             var test = await _dbContext.Test.FindAsync(testId);

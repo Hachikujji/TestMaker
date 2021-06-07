@@ -43,7 +43,7 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -81,7 +81,7 @@
                     x:Name="Passwordbox"
                     Grid.Column="1"
                     Background="Gainsboro"
-                    MaxLength="64"
+                    MaxLength="16"
                     PasswordChar="*">
                     <i:Interaction.Behaviors>
                         <services:PasswordBehavior Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
