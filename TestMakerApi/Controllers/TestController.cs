@@ -39,7 +39,7 @@ namespace TestMakerApi.Controllers
         /// Add test
         /// </summary>
         /// <param name="test">Test</param>
-        [HttpPost("/test/addTest")]
+        [HttpPost("/test")]
         [Authorize]
         public async Task<ActionResult> AddTest(Test test)
         {
@@ -62,7 +62,7 @@ namespace TestMakerApi.Controllers
         /// <summary>
         /// Get test list of user
         /// </summary>
-        [HttpGet("/test/getTestList")]
+        [HttpGet("/test")]
         [Authorize]
         public async Task<ActionResult<IList<Test>>> GetTestList()
         {
@@ -82,9 +82,10 @@ namespace TestMakerApi.Controllers
         /// Get user's test by test id
         /// </summary>
         /// <param name="testId">Test id</param>
-        [HttpPost("/test/getTest")]
+        [HttpPost("/test/{id}")]
+        // review http request types
         [Authorize]
-        public async Task<ActionResult<Test>> GetTest([FromBody] int testId)
+        public async Task<ActionResult<Test>> GetTest([FromQuery] id,[FromBody] int testId)
         {
             try
             {
@@ -101,7 +102,7 @@ namespace TestMakerApi.Controllers
         /// Delete test
         /// </summary>
         /// <param name="test">Test</param>
-        [HttpPost("/test/deleteTest")]
+        [HttpPost("/test/{id}")]
         [Authorize]
         public async Task<ActionResult> DeleteTest(Test test)
         {
@@ -177,9 +178,10 @@ namespace TestMakerApi.Controllers
         /// Update test
         /// </summary>
         /// <param name="test">Test</param>
-        [HttpPost("/test/updateTest")]
+        [HttpPut("/test/{id}")]
         [Authorize]
-        public async Task<ActionResult<IList<string>>> UpdateTest(Test test)
+        // move Test to DTO
+        public async Task<ActionResult<IList<string>>> UpdateTest([FromQuery] string id,Test test)
         {
             try
             {
@@ -275,7 +277,7 @@ namespace TestMakerApi.Controllers
         /// </summary>
         /// <param name="testId"></param>
         /// <param name="Authorization">Authorization class in header</param>
-        [HttpPost("/test/getTestResult")]
+        [HttpPost("/test/{id}/result")]
         [Authorize]
         public async Task<ActionResult<TestResult>> GetTestResult([FromBody] int testResultId)
         {

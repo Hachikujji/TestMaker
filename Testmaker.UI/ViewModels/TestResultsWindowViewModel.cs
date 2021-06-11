@@ -60,7 +60,7 @@ namespace TestMaker.UI.ViewModels
             string editTestIdString;
             if (navigationContext.Parameters.Count != 0)
             {
-                editTestIdString = navigationContext.Parameters["TestId"].ToString();
+                editTestIdString = navigationContext.Parameters[nameof(Test.Id)].ToString();
                 if (!string.IsNullOrWhiteSpace(editTestIdString))
                     int.TryParse(editTestIdString, out editTestId);
                 if (editTestId > 0)

@@ -134,6 +134,7 @@ namespace TestMaker.UI.ViewModels
             var json = JsonConvert.SerializeObject(userRequest);
             try
             {
+                // need to move such things to services, from VM you should only pass some parameters
                 HttpResponseMessage response = await StaticProperties.Client.PostAsync("user/authorization", new StringContent(json, Encoding.UTF8, "application/json"));
                 if (response.IsSuccessStatusCode)
                 {

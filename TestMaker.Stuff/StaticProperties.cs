@@ -6,8 +6,10 @@ using TestMaker.Database.Models;
 
 namespace TestMaker.Stuff
 {
+    // not good idea to use same class for Regions, HttpClient, And local storage for user
     public static class StaticProperties
     {
+        // Use Summary doc
         //S hell region
         public const string ContentRegion = "MainRegion";
 

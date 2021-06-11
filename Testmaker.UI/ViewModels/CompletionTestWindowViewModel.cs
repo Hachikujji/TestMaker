@@ -58,6 +58,7 @@ namespace TestMaker.UI.ViewModels
         /// <param name="navigationContext">key=value vars</param>
         public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
+            // can be implemented in more elegant way, create some local storage service and hangle if user logged in or not
             string TestIdString = navigationContext.Parameters["TestId"].ToString();
             if (int.TryParse(TestIdString, out int testId))
                 if (!await TryGetTest(testId))

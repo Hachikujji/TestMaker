@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace TestMaker.Database.Entities
 {
-    public class Test
+    public class Test : IValidatableObject
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -29,6 +29,11 @@ namespace TestMaker.Database.Entities
 
         public Test()
         {
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            throw new NotImplementedException();
         }
     }
 }

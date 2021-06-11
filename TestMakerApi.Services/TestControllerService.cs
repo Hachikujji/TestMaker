@@ -111,6 +111,7 @@ namespace TestMakerApi.Services
         public async Task<Test> GetTestAsync(int testId)
         {
             var test = await _databaseService.GetTestAsync(testId);
+
             return test;
         }
 

@@ -61,6 +61,7 @@ namespace TestMaker.UI.ViewModels
                     await TryGetAllowedTestList();
                 else
                 {
+                    // move this static strings to constants
                     MessageBox.Show(LocalizationService.GetLocalizedValue<string>("TokenExpired"));
                     RegionManager.RequestNavigate(StaticProperties.ContentRegion, "AuthorizationWindow");
                 }
